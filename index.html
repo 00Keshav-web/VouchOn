@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VouchOn – Home</title>
+  <style>
+    :root{
+      --blue:#003049;--red:#d62828;--orange:#f77f00;
+      --yellow:#fcbf49;--light:#eae2b7
+    }
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--light)}
+    /* ----------  NAV  ---------- */
+    header{background:var(--blue);color:#fff;padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
+    .brand{display:flex;align-items:center;gap:8px}
+    .brand img{height:40px}
+    nav a{color:#fff;text-decoration:none;margin-left:18px;font-weight:600}
+    nav a.btn{background:var(--orange);padding:6px 14px;border-radius:5px}
+    /* ----------  HERO  ---------- */
+    .hero{background:var(--orange);color:#fff;text-align:center;padding:60px 15px}
+    .hero h2{margin:0 0 12px;font-size:2.4rem}
+    .hero p{margin:0;font-size:1.15rem}
+    
+    /* ----------  CONTENT SECTIONS  ---------- */
+    h3.section-title{color:var(--blue);padding-left:20px;margin:50px 0 15px}
+    .card-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:20px;padding:0 20px}
+    .card{background:#fff;border:1px solid #ccc;border-left:6px solid var(--yellow);border-radius:6px;padding:14px;width:250px}
+    .card h4{margin:0 0 6px;color:var(--blue)}
+    .card p{margin:4px 0;color:#333}
+    .hide{display:none}
+    .voucher.featured {
+      border: 2px solid gold;
+      background-color: #fff7d1;
+    }
+    #featured-voucher {
+      display: flex;
+      overflow-x: auto;
+      gap: 16px;
+      padding: 10px;
+    }
+
+    .featured-voucher{
+      min-width: 250px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 10px;
+      background: #fcbf49;
+      flex-shrink: 0;
+    }
+
+    .buy-btn {
+      padding: 0.5rem 1rem;
+      font-weight: bold;
+      background-color: var(--red);
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .buy-btn:hover {
+      background-color: var(--blue-dark);
+    }
+
+    /* ----------  FOOTER  ---------- */
+    footer{background:#f8f8f8;text-align:center;padding:25px 10px;color:#444;font-size:.95rem;margin-top:60px}
+  </style>
+</head>
+<body>
+  <!-- ----------  NAVBAR  ---------- -->
+  <header>
+    <div class="brand">
+      <img src="vouchon-logo.png" alt="VouchOn Logo">
+      <strong>VouchOn</strong>
+    </div>
+    <nav id="nav-links">
+      <a href="login.html">Login</a>
+      <a href="login.html">Profile</a>
+      <a href="cart.html" class="btn">Cart</a>
+    </nav>
+  </header>
+
+  <!-- ----------  HERO  ---------- -->
+  <section class="hero">
+    <h2>Save Big. Sell Smart.</h2>
+    <p>Discover, buy or sell discount vouchers in seconds!</p>
+  </section>
+
+  <!-- ----------  TRENDING VOUCHERS  ---------- -->
+  <section>
+    <h2>🔥 Featured Vouchers</h2>
+    <div id="featured-voucher"></div>
+  </section>
+  
+
+  <!-- ----------  CATEGORIES  ---------- -->
+  <h3 class="section-title">Browse Categories</h3>
+  <div class="card-grid">
+    <a class="card" href="fashion.html"><h4>👗 Fashion</h4></a>
+    <a class="card" href="accessories.html"><h4>👜 Accessories</h4></a>
+    <a class="card" href="travel.html"><h4>✈️ Travel</h4></a>
+    <a class="card" href="groceries.html"><h4>🛒 Groceries</h4></a>
+    <a class="card" href="giftcards.html"><h4>🎁 Gift Cards</h4></a>
+    <a class="card" href="others.html"><h4>📦 Others</h4></a>
+  </div>
+
+  <!-- ----------  FOOTER  ---------- -->
+  <footer>
+    <p>© 2025 VouchOn | 
+      <a href="terms.html" style="color:#fcbf49; text-decoration:none;">Terms & Conditions</a> | 
+      <a href="privacy.html" style="color:#fcbf49; text-decoration:none;">Privacy Policy</a>
+    </p>
+    <p>Questions? Contact us at <strong>vouchon008@gmail.com</strong></p>
+    <p>&copy; 2025 VouchOn · Smart Shopping Made Easy</p>
+  </footer>
+
+  <!-- ----------  FIREBASE & SEARCH  ---------- -->
+  <script type="module">
+    import { initializeApp }          from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getDatabase, ref, push, get }  from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+
+    /* === Firebase config === */
+    const firebaseConfig = {
+      apiKey: "AIzaSyAWYBe4SSraagPk2piNq2f53l07Bb6xo9s",
+      authDomain: "vouchon-c0b55.firebaseapp.com",
+      databaseURL: "https://vouchon-c0b55-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "vouchon-c0b55",
+      storageBucket: "vouchon-c0b55",
+      messagingSenderId: "882090900584",
+      appId: "1:882090900584:web:cd6310c625cc98a477cfdd"
+    };
+    const app  = initializeApp(firebaseConfig);
+    const db   = getDatabase(app);
+    const auth = getAuth();
+    let currentUser ;
+
+    /* === Login/Profile logic === */
+    const navLinks = document.getElementById("nav-links");
+    onAuthStateChanged(auth, user=>{
+      if (user){
+        navLinks.innerHTML =
+          `<a href="profile.html">Profile</a>
+           <a href="cart.html" class="btn">Cart</a>`;
+           currentUser = user;
+      }
+    });
+      const featuredSection = document.getElementById("featured-voucher"); // Add a div with this ID in HTML
+
+      const categories = ["Fashion", "Accessories", "Travel", "Groceries", "GiftCards","Others"]; // list all categories
+
+      categories.forEach(category => {
+        get(ref(db, `categories/${category}`)).then(snapshot => {
+          if (snapshot.exists()) {
+            const vouchers = snapshot.val();
+            Object.entries(vouchers).forEach(([id, v]) => {
+              if (v.featured && v.verified) {
+                const div = document.createElement("div");
+                div.className = "featured-voucher";
+                div.innerHTML = `
+                  <h3>${v.name} 🔥</h3>
+                  <p><strong>Brand: </strong> ${v.brand}</p>
+                  <p>Category: ${category}</p>
+                  <p>Price: ₹${v.price}</p>
+                  <p>Expires: ${v.expiryDate}</p>
+                  <p>Condition: ${v.conditions}</p>
+                  <button class="buy-btn"> Buy Now </button>
+                `;
+                const btn = div.querySelector(".buy-btn");
+
+                btn.addEventListener("click", async () => {
+                  if(!auth.currentUser) {
+                    alert("Please log in to buy this voucher.");
+                    window.location.href = "login.html";
+                    return;
+                  }
+
+                  const cartRef = ref(db, `carts/${auth.currentUser.uid}`);
+                   push(cartRef, {
+                    name: v.name,
+                    price: v.price,
+                    expiryDate: v.expiryDate,
+                    brand: v.brand || "",
+                    category: v.category || "Uncategorized", 
+                    code: v.code || "",
+                    conditions: v.conditions || "",
+                    seller: v.seller || "",
+                    key: v.key,
+                    featured: v.featured,
+                  });
+                  alert(`${v.name} added to cart.`);
+                });
+                featuredSection.appendChild(div);
+              }
+            });
+          }
+        });
+      });
+ </script>
+</body>
+</html>

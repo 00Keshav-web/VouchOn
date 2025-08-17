@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Dashboard - VouchOn</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: Arial, sans-serif; background: #eae2b7; margin: 20px; color: #003049; }
+    h1 { color: #d62828; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    th, td { border: 1px solid #fcbf49; padding: 8px; text-align: left; }
+    th { background-color: #f77f00; color: white; }
+    button { background-color: #d62828; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; margin-right: 5px; }
+    button:disabled { background-color: #ccc; cursor: not-allowed; }
+    .proof-img, .proof-video { max-width: 200px; display: block; margin-top: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Admin Dashboard</h1>
+
+  <h2>Pending Buyer Confirmation Purchases</h2>
+  <table id="pendingPurchasesTable">
+    <thead>
+      <tr>
+        <th>Buyer ID</th>
+        <th>Voucher ID</th>
+        <th>Seller ID</th>
+        <th>Voucher Name</th>
+        <th>Amount (₹)</th>
+        <th>Confirmed</th>
+        <th>Auto Confirm At</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>Seller Payout Summary (Confirmed but Not Paid)</h2>
+  <table id="sellerPayoutTable">
+    <thead>
+      <tr>
+        <th>Seller ID</th>
+        <th>Total Amount (₹)</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>Voucher Reports (Buyer Submitted Proof)</h2>
+  <div id="reportsContainer">Loading...</div>
+
+  <h2>Buyer Refunds</h2>
+  <table id="buyerRefundTable">
+    <thead>
+      <tr>
+        <th>Buyer ID</th>
+        <th>Voucher ID</th>
+        <th>Amount (₹)</th>
+        <th>Reason</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js";
+    import { getDatabase, ref, get, update, onValue } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-database.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAWYBe4SSraagPk2piNq2f53l07Bb6xo9s",
+      authDomain: "vouchon-c0b55.firebaseapp.com",
+      databaseURL: "https://vouchon-c0b55-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "vouchon-c0b55",
+      storageBucket: "vouchon-c0b55",
+      messagingSenderId: "882090900584",
+      appId: "1:882090900584:web:cd6310c625cc98a477cfdd"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const auth = getAuth();
+
+    const pendingPurchasesTableBody = document.querySelector('#pendingPurchasesTable tbody');
+    const sellerPayoutTableBody = document.querySelector('#sellerPayoutTable tbody');
+    const reportsContainer = document.getElementById("reportsContainer");
+
+    // Replace with your admin UIDs
+    const adminUids = ['XLYCuV6kDqhQC4mzicl5544xsOx1', 'ADMIN_UID_2'];
+
+    function isAdmin(user) {
+      return user && adminUids.includes(user.uid);
+    }
+
+    async function loadDashboard() {
+      const snapshot = await get(ref(db, 'purchased'));
+      if (!snapshot.exists()) {
+        pendingPurchasesTableBody.innerHTML = '<tr><td colspan="7">No purchases found.</td></tr>';
+        sellerPayoutTableBody.innerHTML = '<tr><td colspan="3">No payouts pending.</td></tr>';
+        return;
+      }
+
+      const now = Date.now();
+      const updates = {};
+      const pendingRows = [];
+      const sellerPayouts = {};
+
+      snapshot.forEach(userSnap => {
+        const userUid = userSnap.key;
+        userSnap.forEach(purchaseSnap => {
+          const purchaseId = purchaseSnap.key;
+          const purchase = purchaseSnap.val();
+
+          // Auto-confirm
+          if (!purchase.status && purchase.disputeDeadline && now >= purchase.disputeDeadline) {
+            updates[`purchased/${userUid}/${purchaseId}/status`] = true;
+            updates[`purchased/${userUid}/${purchaseId}/disputeDeadline`] = now;
+            purchase.status = true;
+          }
+
+          // Pending confirmation row
+          if(purchase.status !=='confirmed' && purchase.status !== 'Resolved'&& purchase.status !== 'Voucher Refunded' && purchase.status !== true && !purchase.refundBuyer) {
+            pendingRows.push(`
+            <tr>
+              <td>${userUid}</td>
+              <td>${purchaseId}</td>
+              <td>${purchase.seller}</td>
+              <td>${purchase.name || 'N/A'}</td>
+              <td>₹${purchase.price || 0}</td>
+              <td>No</td>
+              <td>${purchase.disputeDeadline ? new Date(purchase.disputeDeadline).toLocaleString() : 'N/A'}</td>
+            </tr>
+          `);
+          }
+          
+
+          // Seller payouts
+          if ((purchase.status === 'confirmed' || purchase.status === 'Resolved') && !purchase.paidToSeller && !purchase.refundBuyer) {
+              const sellerUid = purchase.seller || 'Unknown';
+              if (!sellerPayouts[sellerUid]) sellerPayouts[sellerUid] = { total: 0, vouchers: [] };
+              sellerPayouts[sellerUid].total += Number(purchase.price || 0);
+              sellerPayouts[sellerUid].vouchers.push({ userUid, purchaseId });
+          }
+        });
+      });
+
+      if (Object.keys(updates).length > 0) await update(ref(db), updates);
+
+      pendingPurchasesTableBody.innerHTML = pendingRows.length ? pendingRows.join('') : '<tr><td colspan="7">No pending purchases.</td></tr>';
+
+      const payoutRows = Object.entries(sellerPayouts).map(([sellerUid, data]) => `
+        <tr>
+          <td>${sellerUid}</td>
+          <td>₹${data.total.toFixed(2)}</td>
+          <td><button onclick='bulkPaySeller("${sellerUid}")'>Pay Seller</button></td>
+        </tr>
+      `);
+      sellerPayoutTableBody.innerHTML = payoutRows.length ? payoutRows.join('') : '<tr><td colspan="3">No payouts pending.</td></tr>';
+
+      window._sellerPayouts = sellerPayouts;
+
+      //buyer-refund
+      const buyerRefundRows = [];
+      snapshot.forEach(userSnap => {
+        const userUid = userSnap.key;
+        userSnap.forEach(purchaseSnap => {
+          const purchaseId = purchaseSnap.key;
+          const purchase = purchaseSnap.val();
+
+          if (purchase.refundBuyer) {
+            buyerRefundRows.push(`
+              <tr>
+                <td>${userUid}</td>
+                <td>${purchaseId}</td>
+                <td>₹${purchase.price || 0}</td>
+                <td>Voucher Dispute</td>
+                <td><button onclick='refundBuyer("${userUid}","${purchaseId}",this)'>Refund Buyer</button></td>
+              </tr>
+            `);
+          }
+        });
+      });
+
+      document.querySelector("#buyerRefundTable tbody").innerHTML =
+        buyerRefundRows.length
+          ? buyerRefundRows.join('')
+          : '<tr><td colspan="4">No refunds pending.</td></tr>';
+          // ✅ New refundBuyer function
+          window.refundBuyer = async (buyerUid, purchaseId, btn) => {
+            if (!confirm("Are you sure you want to refund this buyer?")) return;
+
+            try {
+              await update(ref(db, `purchased/${buyerUid}/${purchaseId}`), {
+                refundBuyer: false,
+                refundDate: new Date().toISOString(),
+                status: "Voucher Refunded"
+              });
+
+              alert("Buyer refunded successfully.");
+              btn.disabled = true;
+              btn.innerText = "Refunded ✅";
+            } catch (error) {
+              console.error("Error refunding buyer:", error);
+              alert("Failed to refund buyer.");
+            }
+          };
+    }
+
+
+    // ✅ FIXED bulkPaySeller definition
+    window.bulkPaySeller = async (sellerUid) => {
+      const payouts = window._sellerPayouts;
+      if (!payouts || !payouts[sellerUid]) return;
+
+      const updates = {};
+      payouts[sellerUid].vouchers.forEach(v => {
+        updates[`purchased/${v.userUid}/${v.purchaseId}/paidToSeller`] = true;
+        updates[`purchased/${v.userUid}/${v.purchaseId}/refundBuyer`] = false;
+        updates[`purchased/${v.userUid}/${v.purchaseId}/sellerEarned`] = true;
+        updates[`sellerEarnings/${sellerUid}/${v.purchaseId}/paidToSeller`] = true;
+        updates[`sellerEarnings/${sellerUid}/${v.purchaseId}/refundBuyer`] = false;
+      });
+
+      await update(ref(db), updates);
+      alert(`Paid ₹${payouts[sellerUid].total.toFixed(2)} to seller ${sellerUid}`);
+      loadDashboard();
+    };
+
+    // 📌 Load voucher reports
+    function loadReports() {
+      onValue(ref(db, "purchased"), (snapshot) => {
+        if (!snapshot.exists()) {
+          reportsContainer.innerHTML = "<p>No reports found.</p>";
+          return;
+        }
+        reportsContainer.innerHTML = "";
+        snapshot.forEach(userSnap => {
+          const buyerUid = userSnap.key;
+          userSnap.forEach(voucherSnap => {
+            const voucherId = voucherSnap.val();
+            if( voucherId.status === 'disputed') {
+            const proofHTML = voucherId.reportProof?.endsWith(".mp4")
+              ? `<video src="${voucherId.reportProof}" controls class="proof-video"></video>`
+              : `<img src="${voucherId.reportProof}" class="proof-img"/>`;
+            reportsContainer.innerHTML += `
+              <div style="border:1px solid #ccc; margin:10px; padding:10px;">
+                <p><b>Buyer ID:</b> ${buyerUid}</p>
+                <p><b>Seller ID:</b> ${voucherId.seller}</p>
+                ${proofHTML}
+                <p>Status: ${voucherId.status}</p>
+                <button onclick="resolveReport('${buyerUid}', '${voucherSnap.key}')">Mark as Resolved</button>
+              </div>
+            `;
+            }
+          });
+        });
+      });
+    }
+
+    window.resolveReport = async (buyerUid, reportKey) => {
+      const choice = confirm("Click OK to Pay Seller, Cancel to Refund Buyer");
+
+      const reportRef = ref(db, `purchased/${buyerUid}/${reportKey}`);
+      const snapshot = await get(reportRef);
+      if (!snapshot.exists()) {
+        alert("Report not found.");
+        return;
+      }
+
+      const report = snapshot.val();
+      console.log("Report data:", report);
+
+      
+      // Always mark as resolved
+      await update(ref(db,`purchased/${buyerUid}/${report.key}`),{
+        status: "Resolved"
+      });
+
+      if (choice) {
+        // ✅ Pay Seller
+       await update(ref(db,`purchased/${buyerUid}/${report.key}`),{
+            paidToSeller: false,
+            refundBuyer: false
+        });
+
+       // still unpaid, will appear in payout table
+        alert("Marked as Pay Seller. Added to Seller Payout list.");
+      } else {
+        // ❌ Refund Buyer
+        await update(ref(db,`purchased/${buyerUid}/${report.key}`),{
+          refundBuyer: true,
+          paidToSeller: true
+        });
+
+        await update(ref(db, `sellerEarnings/${report.seller}/${report.key}`), {
+          refundBuyer: true,
+          paidToSeller: true
+        });
+        alert("Marked as Refund Buyer.");
+
+        // Increase cheating count
+        const sellerId = report.seller;
+        const sellerRef = ref(db, `users/${sellerId}/cheatingCount`);
+        const sellerSnap = await get(sellerRef);
+        const currentCount = sellerSnap.exists() ? sellerSnap.val() : 0;
+        await update(ref(db,`users/${sellerId}`),{
+        cheatingCount: currentCount + 1
+        });
+      }
+
+    };
+
+    onAuthStateChanged(auth, (user) => {
+      if (!isAdmin(user)) {
+        alert('Access denied. Admins only.');
+        window.location.href = '/';
+        return;
+      }
+      loadDashboard();
+      loadReports();
+    });
+  </script>
+</body>
+</html>

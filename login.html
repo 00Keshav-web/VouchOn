@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - VouchOn</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #eae2b7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .auth-container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 350px;
+    }
+
+    input, button {
+      width: 100%;
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      background-color: #f77f00;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #d65d00;
+    }
+
+    a {
+      color: #003049;
+      text-decoration: underline;
+      font-size: 14px;
+    }
+
+    .error {
+      color: red;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .success {
+      color: green;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <main class="auth-container">
+    <h2 style="text-align: center;">Login to VouchOn</h2>
+    <form id="login-form">
+      <input type="text" id="name" placeholder="Your Name" required/>
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <button type="submit">Login</button>
+      <p style="text-align: right; margin: 0;">
+        <a href="#" id="forgot-password-link">Forgot Password?</a>
+      </p>
+    </form>
+
+    <p id="error-msg" class="error"></p>
+    <p id="success-msg" class="success"></p>
+
+    <p style="text-align: center; color: black;">Don't have an account? <a href="signup.html">Sign up</a></p>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAWYBe4SSraagPk2piNq2f53l07Bb6xo9s",
+      authDomain: "vouchon-c0b55.firebaseapp.com",
+      projectId: "vouchon-c0b55",
+      storageBucket: "vouchon-c0b55",
+      messagingSenderId: "882090900584",
+      appId: "1:882090900584:web:cd6310c625cc98a477cfdd"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const loginForm = document.getElementById("login-form");
+    const errorMsg = document.getElementById("error-msg");
+    const successMsg = document.getElementById("success-msg");
+    const forgotPasswordLink = document.getElementById("forgot-password-link");
+
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      errorMsg.textContent = "";
+      successMsg.textContent = "";
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      signInWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          window.location.href = "index.html";
+        })
+        .catch((error) => {
+          errorMsg.textContent = "Invalid Password";
+          console.log(error);
+        });
+    });
+
+    forgotPasswordLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      errorMsg.textContent = "";
+      successMsg.textContent = "";
+
+      const email = document.getElementById("email").value.trim();
+      if (!email) {
+        errorMsg.textContent = "Please enter your email above first.";
+        return;
+      }
+
+      sendPasswordResetEmail(auth, email)
+        .then(() => {
+          successMsg.textContent = "Password reset email sent. Check your inbox.";
+        })
+        .catch((error) => {
+          errorMsg.textContent = error.message;
+        });
+    });
+  </script>
+</body>
+</html>

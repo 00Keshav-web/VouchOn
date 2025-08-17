@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Billing - VouchOn</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script> <!-- Razorpay -->
+</head>
+<body>
+  <header style="background-color: #003049; padding: 10px; color: white; text-align: center;">
+    <h1>Billing Details</h1>
+  </header>
+
+  <main style="padding: 20px;">
+    <ul id="billing-list" style="list-style: none; padding: 0;"></ul>
+    <ul id="billing-note" style="list-style: none; padding: 0;"></ul>
+    <h3>Total Amount: ₹<span id="billing-total"></span></h3>
+    <label>
+      <input type="checkbox" id="useWallet" />
+      Use ₹5 from wallet (if available)
+    </label>
+    <p id="walletAppliedText"></p>
+    <p id="finalAmount"></p>
+    <button class="buy-btn" id="nextBtn" style="background-color: red; border: none;
+    color: white; padding: 5px;margin-top: 10px;">Next ➡</button>
+  </main>
+
+<script type="module">
+import { initializeApp} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+import { getDatabase, ref, push, set, get, update } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAWYBe4SSraagPk2piNq2f53l07Bb6xo9s",
+  authDomain: "vouchon-c0b55.firebaseapp.com",
+  databaseURL: "https://vouchon-c0b55-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "vouchon-c0b55",
+  appId: "1:882090900584:web:cd6310c625cc98a477cfdd"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+const list = document.getElementById("billing-list");
+const totalEl = document.getElementById("billing-total");
+const note = document.getElementById("billing-note");
+
+const billingItems = JSON.parse(sessionStorage.getItem("billingItems") || "[]");
+const featuredVoucher = JSON.parse(sessionStorage.getItem("featuredVoucher"));
+
+let total = 0;
+let convenienceFee = 0;
+
+function calculateConvenienceFee(price) {
+  if (price < 300 ) return 11;
+  if (price >= 300 && price < 500) return 13;
+  if (price >= 500 && price <= 1000) return 18;
+  return +(price * 0.033).toFixed(2);
+}
+
+// Render billing items
+if(featuredVoucher) {
+  const li = document.createElement("li");
+  li.innerHTML = `
+    <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+      <h4>${featuredVoucher.name}</h4>
+      <p>Brand: ${featuredVoucher.brand}</p>
+      <p>Price: ₹${featuredVoucher.price}</p>
+      <p>Expires: ${featuredVoucher.expiryDate}</p>
+      <p><strong>Featured Listing Fee:</strong> ₹15</p>
+    </div>
+  `;
+  list.appendChild(li);
+  total = 15;
+  totalEl.textContent = total;
+} else if (billingItems.length) {
+  const sumPrice = billingItems.reduce((acc, item) => acc + Number(item.price), 0);
+  convenienceFee = calculateConvenienceFee(sumPrice);
+  total = sumPrice + convenienceFee;
+
+  billingItems.forEach(item => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+        <h4>${item.name}</h4>
+        <p>Brand: ${item.brand}</p>
+        <p>Price: ₹${item.price}</p>
+        <p>Expires: ${item.expiryDate}</p>
+      </div>`;
+    list.appendChild(li);
+  });
+  note.innerHTML = `<li>Includes ₹${convenienceFee} Convenience Fee (incl. all taxes)</li>`;
+  totalEl.textContent = total.toFixed(2);
+} else {
+  list.innerHTML = "<li>No vouchers to bill.</li>";
+  totalEl.textContent = "0";
+  note.textContent = "";
+}
+
+// Handle Next / Pay button
+document.getElementById("nextBtn").addEventListener("click", async () => {
+  const useWallet = document.getElementById("useWallet").checked;
+  const walletText = document.getElementById("walletAppliedText");
+  const finalAmountText = document.getElementById("finalAmount");
+
+  const user = auth.currentUser;
+  if (!user) { alert("Please login first."); return; }
+  const uid = user.uid;
+  const userRef = ref(db, `users/${uid}`);
+  const userSnap = await get(userRef);
+  if (!userSnap.exists()) { alert("User not found."); return; }
+
+  const userData = userSnap.val();
+  let walletBalance = userData.walletBalance || 0;
+  let walletUsed = 0;
+
+  if (useWallet && walletBalance > 0) {
+    walletUsed = Math.min(5, walletBalance, total);
+    total -= walletUsed;
+    await update(userRef, { walletBalance: walletBalance - walletUsed });
+    walletText.innerText = `₹${walletUsed} applied from wallet\nWallet Balance left: ${userData.walletBalance - walletUsed}`;
+  } else {
+    walletText.innerText = `Wallet not used\nWallet Balance left: ${walletBalance}`;
+  }
+
+  finalAmountText.innerText = `Total to pay: ₹${total.toFixed(2)}`;
+  sessionStorage.setItem("finalAmount", total.toFixed(2));
+  sessionStorage.setItem("walletUsed", walletUsed);
+
+  const paymentPurpose = localStorage.getItem("paymentPurpose") || "purchase";
+
+  try {
+    // 1️⃣ Create order
+    const res = await fetch("http://localhost:3000/create-order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ amount: total * 100 })
+    });
+    if (!res.ok) throw new Error("Failed to create order");
+    const order = await res.json();
+
+    // 2️⃣ Razorpay Checkout
+    const options = {
+      key: "rzp_test_R5mqqaNbEl5Mqd",
+      amount: order.amount,
+      currency: "INR",
+      name: "VouchOn",
+      description: "Voucher Purchase",
+      order_id: order.id,
+      handler: async function(response) {
+        try {
+        const verifyRes = await fetch("http://localhost:3000/verify-payment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            orderId: response.razorpay_order_id,
+            paymentId: response.razorpay_payment_id,
+            signature: response.razorpay_signature
+          })
+        });
+        const data = await verifyRes.json();
+        if (data.success) {
+          alert("✅ Payment successful!");
+          if(paymentPurpose === "featured"){
+            localStorage.removeItem("paymentPurpose");
+            window.location.href = "featured-confirmation.html";
+          } else {
+            window.location.href = "confirmation.html";
+          }
+        } else {
+          alert("❌ Payment verification failed!");
+        }
+      } catch(err) {
+        console.error(err);
+        alert("Error verifying payment. Contact support.");
+      }
+    },
+      prefill: { email: userData.email || "", contact: userData.phone || "" },
+      theme: { color: "#f77f00" },
+      modal: {
+        ondismiss: function() {
+          // ✅ Called if user closes Razorpay popup
+          alert("Payment cancelled. You can try again.");
+          // Optionally reset total or UI
+          document.getElementById("finalAmount").innerText = `Total to pay: ₹${total.toFixed(2)}`;
+        }
+      }
+    };
+    const rzp = new Razorpay(options);
+    rzp.open();
+  } catch(err) {
+    console.error("Payment error:", err);
+    alert("Payment failed. Try again.");
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,254 @@
+/* Brand Colors */
+:root {
+  --blue-dark: #003049;
+  --red: #d62828;
+  --orange: #f77f00;
+  --yellow: #fcbf49;
+  --beige: #eae2b7;
+  --logo-bg: #6c3dd7; /* Background from your image */
+}
+
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: var(--logo-bg);
+  color: var(--beige);
+}
+
+/* Header Styles */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--blue-dark);
+  padding: 1rem 1rem;
+  color: white;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 25px;
+  margin-right: 0.5rem;
+}
+
+.site-title {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--yellow);
+}
+
+.nav {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.nav-link {
+  color: var(--beige);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.nav-link:hover {
+  color: var(--orange);
+}
+
+.section-title {
+  font-size: 1.7rem;
+  margin-bottom: 2rem;
+  color: var(--beige);
+}
+
+.voucher-section {
+  padding: 3rem 2rem;
+  background-color: var(--logo-bg);
+  min-height: 100vh;
+  text-align: center;
+}
+
+.voucher-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding-top: 2rem;
+}
+
+.voucher-card {
+  background-color: var(--blue-dark);
+  color: var(--beige);
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  transition: transform 0.2s ease;
+}
+
+.voucher-card:hover {
+  transform: translateY(-5px);
+  background-color: var(--orange);
+  color: #fff;
+}
+
+.voucher-card h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1.25rem;
+  color: var(--yellow);
+}
+
+.voucher-card p {
+  margin-bottom: 1rem;
+}
+
+.buy-btn {
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  background-color: var(--red);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.buy-btn:hover {
+  background-color: var(--blue-dark);
+}
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #f77f00; /* VouchOn orange */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #d62828; /* Deep red on hover */
+}
+
+.create-btn {
+  margin-left: 15px;
+}
+.logout-btn {
+  background-color: #d62828; /* Red */
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  margin-left: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.logout-btn:hover {
+  background-color: #a61c1c;
+}
+
+.remove{
+  background-color: #d62828; /* Red */
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  margin-left: 1px;
+  margin-top: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+.remove:hover {
+  background-color: #a61c1c;
+}
+
+.buy-all-btn{
+  background-color: #d62828; /* Red */
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  margin-left: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+.buy-all-btn:hover {
+  background-color: #a61c1c;
+}
+.arrow-back { position: fixed; left: 20px; top: 10px; cursor: pointer; font-size: 1.5em; color: #cdd1d4; }
+
+/* Filter Bar Styling */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 16px;
+  background-color: #eae2b7;
+  border-bottom: 2px solid #003049;
+  justify-content: center;
+  align-items: center;
+}
+
+.filter-bar input,
+.filter-bar button {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  font-size: 8px;
+  width: 80px;
+  border-radius: 6px;
+  outline: none;
+}
+
+.filter-bar input:focus {
+  border-color: #003049;
+}
+
+.filter-bar button {
+  background-color: #f77f00;
+  padding: 8px 12px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.filter-bar button:hover {
+  background-color: #d62828;
+}
+
+@media (max-width: 60px) {
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-bar input,
+  .filter-bar button {
+    width: 50%;
+  }
+}
+.rating-reviews {
+  background: #fcbf49;
+  padding: 10px;
+  border-radius: 6px;
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #003049;
+}
+

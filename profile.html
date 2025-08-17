@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Profile - VouchOn</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="profile.css"/>
+</head>
+<body>
+  <header>
+    <div>
+      <button onclick="history.back()" class="buy-btn" style="width: 70px;">⬅ Back</button>
+      <button class="buy-btn" onclick="window.location='index.html'" style="width: 70px;">🏠 Home</button>
+    </div>
+    <h2>👤 Profile</h2>
+    <div><!-- Spacer --></div>
+  </header>
+
+  <main>
+    <!-- User Info -->
+    <section id="user-info" class="user-Details">
+      <h3>User Details</h3>
+      <p><strong>Name:</strong> <span id="user-name" style="font-weight: bolder; font-size: larger;">Loading...</span></p>
+      <p><strong>Email:</strong> <span id="user-email" style="font-size: large;">Loading...</span></p>
+      <p><strong>Gender:</strong> <span id="user-gender" style="font-size: large;">Loading...</span></p>
+      <p><strong>Interests:</strong> <span id="user-interests" style="font-size: large;">Loading...</span></p>
+      <button onclick="toggleEdit()" class="buy-btn" style="width: 150px">✏️ Edit Profile</button>
+      <div id="edit-section" style="display:none;">
+        <input type="text" id="edit-name" placeholder="New Name" />
+        <select id="edit-gender">
+          <option value="">Select Gender</option>
+          <option>Male</option><option>Female</option><option>Other</option>
+        </select>
+        <input type="text" id="edit-interests" placeholder="Interests (comma separated)" />
+        <button id="save-info">Save Changes</button>
+      </div>
+    </section>
+
+    <div class="profile-section">
+      <button class="collapsible"><span> Refer  👥 and Earn 🎁</span> <span class="arrow">▼</span> </button>
+      <div class="content">
+        <p>Your Referral Code, Wallet Balance and Free Featured Listings will appear here.</p>
+          <section id="referral-wallet-section" style="margin-top: 20px;">
+            <h2>Your Referral & Rewards 🎁</h2>
+            <p><strong>Your Referral Code:</strong> <span id="myReferralCode"></span>
+              <button onclick="copyReferralCode()" class="buy-btn" style="height: 35px; width: 60px; margin-left: 5px;">Copy</button>
+            </p>
+            <small style="display:block; color:#555;">Tip: Share your code with friends to earn rewards!</small>
+
+            <p><strong>Wallet Balance:</strong> ₹<span id="walletBalance"></span></p>
+            <p><strong>Free Featured Listings:</strong> <span id="featuredListings"></span></p>
+          </section>
+        </div>
+      </div>
+
+    <!-- Purchased Vouchers -->
+    <div class="profile-section">
+      <button class="collapsible">
+        <span>Purchased Vouchers 🛍️</span>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="content">
+        <p>Your Purchased vouchers appear here.</p>
+        <section>
+          <h3>Purchased Vouchers 🛍️</h3>
+          <ul id="purchased-list"></ul>
+        </section>
+      </div>
+    </div>
+
+
+    <!-- Sell Voucher -->
+    <div class="profile-section">
+      <button class="collapsible">
+        <span>Sell Vouchers 💰</span>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="content">
+        <p>You can sell vouchers here.</p>
+        <section>
+          <h3>Sell a Voucher 💰</h3>
+          <form id="sell-form">
+            <input type="text" id="voucher-name" placeholder="Offer Name" required />
+            <input type="number" id="voucher-price" placeholder="Price (₹)" required />
+            <input type="text" id="voucher-brand" placeholder="Brand" required />
+            <textarea id="voucher-conditions" placeholder="Conditions" required></textarea>
+            <p style="margin-bottom: -5px; margin-top: -4px;"><small>Expiry Date</small></p>
+            <input type="date" id="voucher-expiry" required />
+            <select id="voucher-category" required>
+              <option value="" disabled selected>Select Category</option>
+              <option value="Travel">Travel</option>
+              <option value="Fashion">Fashion</option>
+              <option value="Accessories">Accessories</option>
+              <option value="GiftCards">Gift Cards</option>
+              <option value="Groceries">Groceries</option>
+              <option value="Others">Others</option>
+            </select>    
+            <input type="text" id="voucher-code" placeholder="Voucher Code" required /> 
+            <label>Upload Proof (PDF, Image, etc.):</label>
+            <input type="file" id="voucher-proof" accept="image/*,.pdf" required />   
+            <input type="checkbox" id="is-featured" style="height: 20px; width: 20px; margin-top: 15px;" />
+            <label for="is-featured" style="font-size: 20px;"> Mark as Featured (₹15 extra or 1 free Credit)</label>
+            <label style="font-size: 16px;">
+              <br>
+              <input type="checkbox" id="validVoucherCheckbox" style="height: 15px; width: 15px; margin-top: 15px;" required>
+              I confirm this voucher is valid and unused.
+            </label><br><br>
+            <button type="submit" style="background-color:blueviolet; font-size: 18px; cursor: pointer;">List Voucher</button>
+          </form>
+        </section>
+     </div>
+   </div>
+
+   <!-- Listed Vouchers -->
+   <div class="profile-section">
+      <button class="collapsible">
+        <span> Listed Vouchers </span>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="content">
+        <p>Your Listed vouchers appear here.</p>
+        <section>
+          <h3>Your Listed Vouchers</h3>
+          <ul id="listed-vouchers"></ul>
+        </section>
+      </div>
+   </div>
+
+   <!--Payout Details-->
+   <div class="profile-section">
+    <button class="collapsible">
+      <span> Payout Details 💳 </span>
+      <span class="arrow">▼</span>
+    </button>
+    <div class="content">
+      <p>Your Payout Details appear here.</p>
+      <section style="padding: 20px; border: 1px solid #ccc; margin-top: 20px;">
+        <h2>Payout Details 💳</h2>
+        <label for="payoutMethod">Payout Method:</label>
+        <select id="payoutMethod">
+          <option value="">-- Select --</option>
+          <option value="bank">Bank Transfer</option>
+          <option value="upi">UPI</option>
+        </select>
+      
+        <div id="bankFields" style="display: none; margin-top: 10px;">
+          <label>Bank Account Number:</label>
+          <input type="text" id="bankAccountNumber"><br>
+      
+          <label>Confirm Account Number:</label>
+          <input type="text" id="confirmBankAccountNumber"><br>
+      
+          <label>IFSC Code:</label>
+          <input type="text" id="ifscCode"><br>
+      
+          <label>Bank Name:</label>
+          <input type="text" id="bankName"><br>
+        </div>
+      
+        <div id="upiFields" style="display: none; margin-top: 10px;">
+          <label>UPI ID:</label>
+          <input type="text" id="upiId" placeholder="example@upi"><br>
+        </div>
+      
+        <button id="savePayout" style="margin-top: 15px; padding: 5px 10px;background-color:whitesmoke; font-size: 18px;">Save Payout Details</button>
+
+        <p id="statusMessage"></p>
+      </section>
+    </div>
+   </div>
+
+   <!--Seller Earnings-->
+    <div class="profile-section">
+      <button class="collapsible">
+        <span> Earnings 💰</span>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="content" id="seller-earnings-content">
+        <p>Your Earnings appear here.</p>
+        <p>Loading earnings...</p>
+      </div>
+    </div>
+
+    <button class="logout-btn" id="logout-btn" onclick="handleLogout()">Logout</button>
+    <div class="toast" id="toast">Logging out...</div>
+
+    <button class="logout-btn" id="delete-account-btn" style="background:black; margin-top: 10px;">Delete Account</button>
+
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getDatabase, ref, get, set, push, update, query, orderByChild, equalTo, remove, onValue } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+    import { getStorage, ref as sref , uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js";
+
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAWYBe4SSraagPk2piNq2f53l07Bb6xo9s",
+      authDomain: "vouchon-c0b55.firebaseapp.com",
+      databaseURL:"https://vouchon-c0b55-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "vouchon-c0b55",
+      storageBucket: "vouchon-c0b55",
+      messagingSenderId: "882090900584",
+      appId: "1:882090900584:web:cd6310c625cc98a477cfdd"
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+    const storage = getStorage(app);
+    let currentUser = null;
+    let templateId = null;
+
+    const payoutMethodSelect = document.getElementById("payoutMethod");
+    const bankFields = document.getElementById("bankFields");
+    const upiFields = document.getElementById("upiFields");
+
+    // DOM elements
+    const el = {
+      name: document.getElementById("user-name"),
+      email: document.getElementById("user-email"),
+      gender: document.getElementById("user-gender"),
+      interests: document.getElementById("user-interests"),
+      purchased: document.getElementById("purchased-list"),
+      listed: document.getElementById("listed-vouchers"),
+      editSec: document.getElementById("edit-section"),
+      editName: document.getElementById("edit-name"),
+      editGender: document.getElementById("edit-gender"),
+      editInterests: document.getElementById("edit-interests"),
+    };
+
+    window.copyReferralCode = function () {
+      const code = document.getElementById("myReferralCode").innerText;
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code)
+          .then(() => {
+            alert("Referral code copied!");
+          })
+          .catch(err => {
+            console.error("Clipboard write failed: ", err);
+            fallbackCopy(code);
+          });
+      } else {
+        fallbackCopy(code);
+      }
+    };
+
+    function fallbackCopy(text) {
+      const tempInput = document.createElement("input");
+      tempInput.value = text;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
+      alert("Referral code copied!");
+    }
+
+    function getTemplateId(brand, name) {
+      return `${brand.trim().toLowerCase()}-${name.trim().toLowerCase()}`.replace(/[^a-z0-9]+/g, "-");
+    }
+
+    // Load and display average rating and current user's review for a voucher template
+    async function loadAverageRating(templateId,uniqueId) {
+      const snap = await get(ref(db, `reviews/${templateId}`));
+      const avgSpan = document.getElementById(`avg-rating-${uniqueId}`);
+      if (!snap.exists()) return (avgSpan.innerText = "No ratings yet");
+
+      const reviews = Object.values(snap.val());
+      const avg = (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1);
+      avgSpan.innerText = `${avg} / 5`;
+      console.log("Loading reviews for templateId:", templateId);
+    }
+
+    async function loadRecentReviews(templateId,uniqueId) {
+      const snap = await get(ref(db, `reviews/${templateId}`));
+      const container = document.getElementById(`recent-reviews-${uniqueId}`);
+      container.innerHTML = "";
+
+      if (!snap.exists()) return;
+
+      const reviews = Object.values(snap.val()).slice(-3).reverse();
+      for (const r of reviews) {
+        const p = document.createElement("p");
+        p.innerHTML = `⭐ ${r.rating} – ${r.comment || "No comment"}<br><small>- ${r.name || "User"}</small>`;
+        container.appendChild(p);
+      }
+    }
+
+    async function hasUserRated(templateId, userId) {
+      const snap = await get(ref(db, `reviews/${templateId}`));
+      if (!snap.exists()) return false;
+
+      return Object.values(snap.val()).some(r => r.userId === userId);
+    }
+
+    window.submitReview = async function (templateId, uid,uniqueId) {
+      const rating = parseInt(document.getElementById(`rating-select-${uniqueId}`).value);
+      const comment = document.getElementById(`comment-${uniqueId}`).value;
+
+      const reviewRef = ref(db, `reviews/${templateId}`);
+      const newReviewRef = push(reviewRef);
+
+      await set(newReviewRef, {
+        rating,
+        comment,
+        userId: uid,
+        name: currentUser.displayName || "User",
+        timestamp: new Date().toISOString()
+      });
+
+      alert("Thanks for your feedback!");
+      document.getElementById(`review-form-${uniqueId}`).style.display = "none";
+      console.log("Submitting review for templateId:", templateId);
+      await loadAverageRating(templateId,uniqueId);
+      await loadRecentReviews(templateId,uniqueId);
+    };
+
+    payoutMethodSelect.addEventListener("change", () => {
+      bankFields.style.display = payoutMethodSelect.value === "bank" ? "block" : "none";
+      upiFields.style.display = payoutMethodSelect.value === "upi" ? "block" : "none";
+    });
+
+    document.getElementById("savePayout").addEventListener("click", async () => {
+      const payoutMethod = payoutMethodSelect.value;
+
+      if (!payoutMethod) {
+        alert("Please select a payout method.");
+        return;
+      }
+
+      let payoutData = { method:  payoutMethod };
+
+      if (payoutMethod === "bank") {
+        const accountNumber = document.getElementById("accountNumber").value.trim();
+        const confirmAccountNumber = document.getElementById("confirmAccountNumber").value.trim();
+        const ifsc = document.getElementById("ifsc").value.trim();
+        const bankName = document.getElementById("bankName").value.trim();
+
+        if (!accountNumber || !confirmAccountNumber || !ifsc || !bankName) {
+          statusMessage.innerText = "Please fill all bank details.";
+          statusMessage.style.color = "red";
+          return;
+        }
+        if (accountNumber !== confirmAccountNumber) {
+          statusMessage.innerText = "Account numbers do not match.";
+          statusMessage.style.color = "red";
+          return;
+        }
+
+        payoutData = { ...payoutData, accountNumber, ifsc, bankName };
+      }
+
+      else if (payoutMethod === "upi") {
+        const upiId = document.getElementById("upiId").value.trim();
+        if (!upiId) {
+          statusMessage.innerText = "Please enter a valid UPI ID.";
+          statusMessage.style.color = "red";
+          return;
+        }
+        payoutData = { ...payoutData, upiId };
+      }
+      onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        alert("You must be logged in to save payout details.");
+        return;
+      }
+
+      const uid = user.uid;
+      try {
+        await set(ref(db, `sellers/${uid}/payoutDetails`), payoutData);
+        alert("Payout details saved successfully!");
+      } catch (error) {
+        console.error(error);
+        alert("Error saving payout details: " + error.message);
+      }
+    });
+  });
+
+    const container = document.getElementById('seller-earnings-content');
+
+    function renderSellerEarnings(earningsArray) {
+      if (!earningsArray.length) {
+        container.innerHTML = '<p>No earnings from sales yet.</p>';
+        return;
+      }
+
+      let totalEarnings = 0;
+      let html = `<table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif;">
+        <p>Your Earnings appear here.</p>
+        <thead>
+          <tr style="background-color: #d62828; color: white;">
+            <th style="padding: 8px; text-align: left;">Voucher</th>
+            <th style="padding: 8px; text-align: left;">Date Sold</th>
+            <th style="padding: 8px; text-align: right;">Earnings (₹)</th>
+          </tr>
+        </thead><tbody>`;
+
+      earningsArray
+      .filter(sale => !sale.refundBuyer && sale.paidToSeller)
+      .forEach(sale => {
+        const earnings = sale.salePrice;
+        totalEarnings += earnings;
+        html += `
+          <tr style="border-bottom: 1px solid #eae2b7;">
+            <td style="padding: 8px;">${sale.voucherName}</td>
+            <td style="padding: 8px;">${sale.soldDate}</td>
+            <td style="padding: 8px; text-align: right; font-weight: bold;">${earnings.toFixed(2)}</td>
+          </tr>
+        `;
+      });
+
+      html += `
+        <tr style="background-color: #f77f00; color: white; font-weight: bold;">
+          <td colspan="4" style="padding: 8px; text-align: right;">Total Earnings</td>
+          <td style="padding: 8px; text-align: right;">₹${totalEarnings.toFixed(2)}</td>
+        </tr>
+      </tbody></table>`;
+
+      container.innerHTML = html;
+    }
+
+    onAuthStateChanged(auth, async user => {
+      if (!user) return location.href = "login.html";
+      // basic info
+      currentUser = user;
+      el.name.textContent = user.displayName || "User";
+      el.email.textContent = user.email;
+
+      // load profile extra
+      const snap = await get(ref(db, `users/${user.uid}`));
+      const p = snap.val() || {};
+      el.gender.textContent = p.gender || "";
+      el.interests.textContent = p.interests || "";
+      if (snap.exists()) {
+      const data = snap.val();
+
+      document.getElementById("myReferralCode").innerText = data.myReferralCode || "-";
+      document.getElementById("walletBalance").innerText = data.walletBalance || 0;
+      document.getElementById("featuredListings").innerText = data.freeFeaturedListings || 0;
+      console.log(data);
+     }
+
+     // Load wallet balance
+     const walletRef = ref(db, `users/${user.uid}/walletBalance`);
+      const walletSnap = await get(walletRef);
+      console.log(walletSnap);
+      if (walletSnap.exists()) {
+        document.getElementById("walletBalance").textContent = walletSnap.val();
+      } else {
+        document.getElementById("walletBalance").textContent = "0";
+      }
+
+      // purchased
+        const purSnap = await get(ref(db, `purchased/${user.uid}`));
+        const maxToShow = 5;
+        const showMoreBtn = document.createElement("button");
+
+        if (purSnap.exists()) {
+          const vouchers = Object.entries(purSnap.val())
+            .map(([id, data]) => ({ id, ...data }))
+            .sort((a, b) => {
+              const timeA = a.purchaseTime ? new Date(a.purchaseTime).getTime() : 0;
+              const timeB = b.purchaseTime ? new Date(b.purchaseTime).getTime() : 0;
+              return timeB - timeA;
+            });
+
+          let showingAll = false;
+
+          function renderPurchased(showAll = false) {
+            el.purchased.innerHTML = "";
+            const toShow = showAll ? vouchers : vouchers.slice(0, maxToShow);
+            toShow.forEach(v => {
+              const expired = new Date(v.expiryDate).getTime() < Date.now();
+              const li = document.createElement("li");
+              const templateId = getTemplateId(v.brand, v.name);
+              const reviewDiv = document.createElement("div");
+              const uniqueId = `${v.key}-${templateId}`;  // voucher.key is unique per voucher
+              reviewDiv.className = "review-box";
+              const timeLeftMs = v.disputeDeadline ? v.disputeDeadline - Date.now() : 0;
+              const hoursLeft = Math.max(0, Math.floor(timeLeftMs / (1000 * 60 * 60)));
+              let statusText = v.status || "N/A";
+
+              if (v.status === "pendingBuyerConfirmation") {
+                statusText = `Dispute period ends in ${hoursLeft}h`;
+                if (timeLeftMs <= 0) {
+                  statusText = "Auto-confirmed after dispute period";
+                }
+              }
+
+              li.innerHTML = `
+                <strong>${v.name}</strong> — ₹${v.price}<br><strong>${v.brand}</strong></br>
+                <br>
+                Code: ${v.code}<br>
+                Expiry: ${v.expiryDate} ${expired ? "(Expired)" : ""}<br>
+                ${v.purchaseTime ? `Purchased On: ${new Date(v.purchaseTime).toLocaleString()}` : ""}<br>
+                <strong>Status:</strong> ${statusText}<br><br>
+                ${
+                  v.status === "pendingBuyerConfirmation" && timeLeftMs > 0
+                    ? `<button onclick="confirmVoucher('${user.uid}','${v.id}')" style="background-color: lightyellow; cursor:pointer;">Voucher Working ✅</button>
+                      <button onclick="raiseDispute('${user.uid}','${v.id}')" style="background-color: lightyellow; cursor: pointer;">Report Issue ⚠️</button>` 
+                      : ""
+                      }
+              `;
+           
+              reviewDiv.innerHTML = `
+                <p><strong>Rating:</strong> <span id="avg-rating-${uniqueId}">Loading...</span></p>
+                <div id="review-form-${uniqueId}" style="display:none;">
+                  <select id="rating-select-${uniqueId}">
+                    <option value="5">⭐️⭐️⭐️⭐️⭐️</option>
+                    <option value="4">⭐️⭐️⭐️⭐️</option>
+                    <option value="3">⭐️⭐️⭐️</option>
+                    <option value="2">⭐️⭐️</option>
+                    <option value="1">⭐️</option>
+                  </select><br>
+                  <textarea id="comment-${uniqueId}" placeholder="Leave a comment (optional)"></textarea><br>
+                  <button onclick="submitReview('${templateId}', '${currentUser.uid}','${uniqueId}')" style="background-color:lightyellow; cursor: pointer;">Submit Review</button>
+                </div>
+                <div id="recent-reviews-${uniqueId}"></div>
+              `;
+
+              li.appendChild(reviewDiv);
+
+              console.log('Brand:', v.brand);
+              console.log('Name:', JSON.stringify(v.name));
+              console.log('Template ID:', getTemplateId(v.brand, v.name));
+
+              // Load average + recent reviews
+              loadAverageRating(templateId,uniqueId);
+              loadRecentReviews(templateId,uniqueId);
+
+              // Show rating form only if not already rated
+              hasUserRated(templateId, currentUser.uid).then(rated => {
+                if (!rated) {
+                  document.getElementById(`review-form-${uniqueId}`).style.display = "block";
+                }
+              });
+               el.purchased.appendChild(li);
+               // Load average rating and user review
+               if (!currentUser) return; 
+            });
+
+            if (vouchers.length > maxToShow) {
+              showMoreBtn.textContent = showAll ? "Show Less ▲" : "Show All ▼";
+              el.purchased.appendChild(showMoreBtn);
+            }
+          }
+
+          window.confirmVoucher = async (buyerUid, voucherId) => {
+            await update(ref(db, `purchased/${buyerUid}/${voucherId}`), { status: "confirmed"});
+            alert("Voucher confirmed as working.");
+            location.reload(); // reload to update UI
+          };
+
+          window.raiseDispute = async (buyerUid, voucherId) => {
+            const fileInput = document.createElement("input");
+            fileInput.type = "file";
+            fileInput.accept = "image/*,video/*";
+
+            fileInput.onchange = async (e) => {
+              const file = e.target.files[0];
+              if (!file) return;
+
+              const user = auth.currentUser;
+              if (!user) return alert("Please log in");
+
+              // Upload proof to storage
+              const storagePath = `proofs/${user.uid}/${file.name}`;
+              const fileRef = sref(storage, storagePath);
+              await uploadBytes(fileRef, file);
+              const fileURL = await getDownloadURL(fileRef);
+              await update(ref(db, `purchased/${buyerUid}/${voucherId}`), { status: "disputed", reportProof: fileURL,  disputeAt: Date.now(),
+              disputeBy: buyerUid, });
+              alert("Dispute raised. Admin will review.");
+              location.reload();
+            };
+            fileInput.click();
+          };
+
+          showMoreBtn.className = "btn";
+          showMoreBtn.style = "margin-top:10px; background:#f77f00; color:white; border:none; padding:8px; border-radius:5px;";
+          showMoreBtn.onclick = () => {
+            showingAll = !showingAll;
+            renderPurchased(showingAll);
+          };
+
+          renderPurchased(false);
+        } else {
+          el.purchased.innerHTML = "<li>No purchased vouchers.</li>";
+        }
+
+      // listed
+      const listSnap = await get(ref(db, `listed/${user.uid}`));
+
+      // Load rejected vouchers
+      const rejectedSnap = await get(ref(db, `rejected/${user.uid}`));
+      if (rejectedSnap.exists()) {
+        const now = Date.now();
+        const rejected = Object.entries(rejectedSnap.val())
+          .map(([id, data]) => ({ id, ...data }))
+          .filter(v => now - v.rejectedAt <= 7 * 24 * 60 * 60 * 1000); // within 7 days
+
+        if (rejected.length) {
+          const sec = document.createElement("div");
+          sec.innerHTML = `
+            <div class="collapsible-header" style="
+              background: #003049;
+              color: white;
+              padding: 14px;
+              border-radius: 8px;
+              width:71.5%;
+              margin-left:39px;
+              cursor: pointer;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            ">
+              <span style="margin-left:8px"> Rejected Vouchers ❌</span>
+              <span class="arrow" style="margin-right:10px">▼</span>
+            </div>
+            <div class="collapsible-content" style="
+              display: none;
+              padding: 10px;
+              background: #fff5f5;
+              border: 1px solid #f5c2c2;
+              border-radius: 8px;
+              margin-top: 5px;
+            ">
+            <p>Your Rejected vouchers appear here.</p>
+              <ul id="rejected-list" style="list-style: none; padding: 0; margin: 0;"></ul>
+            </div>
+          `;
+          const logoutBtn = document.getElementById("logout-btn");
+          logoutBtn.parentNode.insertBefore(sec, logoutBtn);
+
+          const ul = sec.querySelector("#rejected-list");
+          rejected.forEach(v => {
+            const li = document.createElement("li");
+            li.innerHTML = `
+              <strong>${v.name}</strong> — ₹${v.price}<br>
+              <strong>Brand:</strong> ${v.brand}<br>
+              <strong>Category:</strong> ${v.category}<br>
+              <strong>Reason:</strong> ${v.reason}<br>
+            `;
+            ul.appendChild(li);
+          });
+
+          // Collapsible toggle logic
+          const header = sec.querySelector(".collapsible-header");
+          const content = sec.querySelector(".collapsible-content");
+          const arrow = sec.querySelector(".arrow");
+
+          header.addEventListener("click", () => {
+            const isVisible = content.style.display === "block";
+            content.style.display = isVisible ? "none" : "block";
+            arrow.textContent = isVisible ? "▼" : "▲";
+          });
+        }
+         // Cleanup: Remove vouchers older than 7 days
+          Object.entries(rejectedSnap.val()).forEach(([id, v]) => {
+            if (!v.rejectedAt || now - v.rejectedAt > 7 * 24 * 60 * 60 * 1000) {
+              remove(ref(db, `rejected/${user.uid}/${id}`));
+            }
+          });
+      }
+
+      if (listSnap.exists()) {
+        const data = listSnap.val();
+        // Updated listed voucher display
+      Object.values(data).forEach(v => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <strong>${v.name}</strong> - ₹${v.price}<br>
+          Brand: ${v.brand}<br>
+          Expiry: ${v.expiryDate}<br>
+          Code: ${v.code}<br>
+          Category: <strong>${v.category || "Uncategorized"}</strong><br>
+          ${v.featured ? "<span style='color: #d62828; font-weight: bold;'>Featured Listing</span>" : ""}
+        `;
+        el.listed.appendChild(li);
+      });
+      } else el.listed.innerHTML = "<li>No listed vouchers.</li>";
+
+      // Earnings
+      if (user) {
+        const userId = user.uid;
+        const earningsref = ref(db, 'sellerEarnings/' + userId);
+
+        // Show loading text
+        container.innerHTML = '<p>Loading earnings...</p>';
+
+        onValue(earningsref, (snapshot) => {
+          const data = snapshot.val();
+          if (!data) {
+            container.innerHTML = '<p>No earnings from sales yet.</p>';
+            return;
+          }
+
+          // Convert object to array
+          const earningsArray = Object.values(data).map(item => ({
+            voucherName: item.name || "N/A",
+            soldDate: item.soldAt 
+            ? new Date(item.soldAt).toLocaleDateString('en-IN', { 
+                  day: '2-digit', 
+                  month: 'short', 
+                  year: 'numeric' 
+                }) 
+            : "N/A",
+            salePrice: Number(item.amount) || 0,
+            refundBuyer: item.refundBuyer,
+            paidToSeller: item.paidToSeller,
+          }));
+
+          renderSellerEarnings(earningsArray);
+        }, (error) => {
+          container.innerHTML = `<p>Error loading earnings: ${error.message}</p>`;
+        });
+
+      } else {
+        container.innerHTML = '<p>Please log in to see your earnings.</p>';
+      }
+     });
+
+     // toggle edit
+     window.toggleEdit = () => {
+      el.editSec.style.display = el.editSec.style. display === "none" ? "block" : "none";
+    };
+
+    // save profile 
+    document.getElementById("save-info").onclick = async () => {
+      
+      const user = auth.currentUser;
+      const updates = {};
+      if (el.editName.value) {
+        updates.displayName = el.editName.value;
+        await updateProfile(user, { displayName: el.editName.value });
+      }
+      await update(ref(db, `users/${user.uid}`), {
+        gender: el.editGender.value,
+        interests: el.editInterests.value,
+      });
+      location.reload();
+    };
+
+    // sell
+    document.getElementById("sell-form").onsubmit = async e => {
+      e.preventDefault();
+      const user = auth.currentUser;
+      if (!user) return alert("Please login.");
+
+      const file = document.getElementById("voucher-proof").files[0];
+      const expiryInput = document.getElementById("voucher-expiry").value;
+      const expiryDate = new Date(expiryInput);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // Normalize to midnight
+
+      if (expiryDate < today) {
+        alert("Voucher is already expired. Please enter a valid future expiry date.");
+        return;
+      }
+
+      if (!file) return alert("Please upload voucher proof.");
+
+      const name = document.getElementById("voucher-name").value;
+      const brand = document.getElementById("voucher-brand").value;
+      const templateId = getTemplateId(brand, name);
+      const category = document.getElementById("voucher-category").value;
+      const id = push(ref(db, `categories/${category}`)).key;
+      const storageRef = sref(storage, `proofs/${user.uid}/${id}`);
+      const snapshot = await uploadBytes(storageRef, file);
+      const proofURL = await getDownloadURL(snapshot.ref);
+
+      const isFeaturedChecked = document.getElementById("is-featured").checked;
+      const isConfirmed = document.getElementById("validVoucherCheckbox").checked;
+      if (!isConfirmed) {
+        alert("You must confirm the voucher is valid and unused before listing.");
+        return;
+      }
+      let isFeatured = false;
+
+      const userRef = ref(db, `users/${user.uid}`);
+      const userSnap = await get(userRef);
+      const userData = userSnap.exists() ? userSnap.val() : {};
+      let freeFeaturedListings = userData.freeFeaturedListings || 0;
+
+      const voucherObj = {
+        name,
+        price: document.getElementById("voucher-price").value,
+        brand,
+        conditions: document.getElementById("voucher-conditions").value,
+        expiryDate: expiryInput,
+        category,
+        code: document.getElementById("voucher-code").value,
+        proof: proofURL,
+        verified: false,
+        seller: user.uid,
+        sellerConfirmation: true, // they checked the box
+        key: id,
+        templateId,
+        myReferralCode,
+        featured: false
+      };
+
+      if (isFeaturedChecked) {
+        if (freeFeaturedListings > 0) {
+          // Ask user if they want to use free credit or pay
+          const useFree = confirm(`You have ${freeFeaturedListings} free featured listing(s). Do you want to use one for this voucher? Click "OK" to use free, or "Cancel" to pay ₹15.`);
+
+          if(useFree) {
+            // ✅ Use free credit
+          isFeatured = true;
+          voucherObj.featured = true;
+
+          await update(userRef, {
+            freeFeaturedListings: freeFeaturedListings - 1
+          });
+
+          await set(ref(db, `listed/${user.uid}/${id}`), voucherObj);
+          alert("Voucher Submitted as Featured using 1 free credit!");
+          location.reload();
+          } else {
+             // User wants to pay
+            voucherObj.featured = true;
+            localStorage.setItem("paymentPurpose", "featured");
+            sessionStorage.setItem("featuredVoucher", JSON.stringify(voucherObj));
+            sessionStorage.setItem("featuredVoucherId", id);
+            window.location.href = "billing.html";
+          }
+        } else {
+          // 🧾 Send to billing to pay ₹11
+          voucherObj.featured = true;
+          localStorage.setItem("paymentPurpose", "featured");
+          sessionStorage.setItem("featuredVoucher", JSON.stringify(voucherObj));
+          sessionStorage.setItem("featuredVoucherId", id);
+          window.location.href = "billing.html";
+        }
+      } else {
+        // Not featured, list directly
+        await set(ref(db, `listed/${user.uid}/${id}`), voucherObj);
+        alert("Voucher Submitted! Awaiting Admin Verification");
+        location.reload();
+      }
+    };
+
+    // logout with toast
+    window.handleLogout = () => {
+      const toast = document.getElementById("toast");
+      toast.style.display = "block";
+      signOut(auth).then(() => location.href = "login.html");
+    };
+
+    // Delete Account handler with confirmation
+    document.getElementById("delete-account-btn").onclick = async () => {
+      if (!confirm("Are you sure you want to DELETE your account? This action is irreversible.")) {
+        return;
+      }
+
+      if (!currentUser) {
+        alert("No logged in user found.");
+        return;
+      }
+
+      try {
+        const userId = currentUser.uid;
+
+        // Delete user data from Realtime Database (users, purchased, listed, rejected, etc.)
+        await Promise.all([
+          remove(ref(db, `users/${userId}`)),
+          remove(ref(db, `purchased/${userId}`)),
+          remove(ref(db, `listed/${userId}`)),
+          remove(ref(db, `rejected/${userId}`)),
+          // Add any other user-specific data paths you use
+        ]);
+
+        // Delete user authentication account
+        await currentUser.delete();
+
+        alert("Your account and all associated data have been deleted.");
+        window.location.href = "signup.html";  // Redirect to signup or home page
+
+      } catch (error) {
+        console.error("Error deleting account:", error);
+        if (error.code === 'auth/requires-recent-login') {
+          alert("Please logout and login again before deleting your account.");
+          // Optionally, you can sign the user out here and redirect to login page
+          await signOut(auth);
+          window.location.href = "login.html";
+        } else {
+          alert("Failed to delete account: " + error.message);
+        }
+      }
+    };
+
+    document.querySelectorAll('.collapsible').forEach(button => {
+      button.addEventListener('click', () => {
+        button.classList.toggle('active');
+
+        const content = button.nextElementSibling;
+        const arrow = button.querySelector(".arrow");
+        const isOpen = content.style.display === "block";
+        content.style.display = isOpen ? "none" : "block";
+        if(arrow) {
+          arrow.textContent = isOpen ? "▼" : "▲";
+        }
+        if (content.style.maxHeight) {
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = content.scrollHeight + 'px';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

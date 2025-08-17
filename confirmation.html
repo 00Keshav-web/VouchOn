@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Purchase Confirmation - VouchOn</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #eae2b7;
+      padding: 20px;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background-color: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+    }
+    h2 {
+      color: #003049;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      background-color: #eda10b;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 5px;
+      border-left: 5px solid #d62828;
+    }
+    .btn-home {
+      margin-top: 20px;
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #003049;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🎉 Thank You for Your Purchase!</h2>
+    <p style="color: #003049;">Your vouchers are listed below:</p>
+    <ul id="voucher-list"></ul>
+    <p style="color: #003049;"><strong>Total Paid:</strong> ₹<span id="total-price">0</span></p>
+    <p style="color: #003049;">Your Purchased Vouchers have been added to your Profile.</p>
+    <p style="color: #003049;">You will be redirected to the homepage in <span id="timer">5</span> seconds...</p>
+    <a href="index.html" class="btn-home">Return to Home</a>
+  </div>
+
+  <!-- Firebase Logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getDatabase, set, ref, get, remove, update } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAWYBe4SSraagPk2piNq2f53l07Bb6xo9s",
+      authDomain: "vouchon-c0b55.firebaseapp.com",
+      databaseURL: "https://vouchon-c0b55-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "vouchon-c0b55",
+      appId: "1:882090900584:web:cd6310c625cc98a477cfdd"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
+    const list = document.getElementById("voucher-list");
+    const totalSpan = document.getElementById("total-price");
+
+    onAuthStateChanged(auth, async user => {
+      if (!user) return location.href = "login.html";
+
+      const cartRef = ref(db, `carts/${user.uid}`);
+      const snapshot = await get(cartRef);
+
+      if (!snapshot.exists()) {
+        list.innerHTML = "<li>No vouchers found.</li>";
+        return;
+      }
+
+      const cart = snapshot.val();
+      let total = 0;
+
+      // Loop through each cart item
+      for (const [key, v] of Object.entries(cart)) {
+        total += parseFloat(parseInt(sessionStorage.getItem("finalAmount"))|| 0);
+
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <strong>${v.name}</strong><br>
+          Brand: ${v.brand}<br>
+          Price: ₹${v.price}<br>
+          Expiry: ${v.expiryDate}<br>
+          Code: <span style="font-family:monospace">${v.code || "XXXXXX"}</span>
+        `;
+        list.appendChild(li);
+        totalSpan.textContent = total;
+        const now = Date.now();
+
+          // Prepare full voucher object
+          const voucherToSave = {
+            name: v.name || "",
+            price: v.price || 0,
+            brand: v.brand || "",
+            expiryDate: v.expiryDate || "",
+            code: v.code || "",
+            category: v.category || "",
+            seller: v.seller || "",
+            key: v.key || key,
+            featured: v.featured || false,
+            purchaseTime: now,
+            status: "pendingBuyerConfirmation", // default
+            disputeDeadline: Date.now() + 48 * 60 * 60 * 1000 // 48 hrs from now
+          };
+          console.log(voucherToSave);
+
+          // --- Place this inside <script type="module"> after db is defined ---
+          async function handleFirstPurchase(userId) {
+            const userSnap = await get(ref(db, `users/${userId}`));
+            if (userSnap.exists() && userSnap.val().referrer) {
+              const referralCode = userSnap.val().referrer;
+              const referrerUidSnap = await get(ref(db, `referralCodes/${referralCode}`));
+              if (referrerUidSnap.exists()) {
+                const referrerUid = referrerUidSnap.val();
+
+                // Add referral bonus
+                const walletSnap = await get(ref(db, `wallets/${referrerUid}/balance`));
+                let balance = walletSnap.exists() ? walletSnap.val() : 0;
+                await set(ref(db, `wallets/${referrerUid}/balance`), balance);
+              }
+            }
+          }
+
+          async function handlePurchaseRewards() {
+          try {
+            const userRef = ref(db, `users/${user.uid}`);
+            const userSnap = await get(userRef);
+            if (!userSnap.exists()) return;
+
+            const userData = userSnap.val();
+            let { purchaseCount = 0, walletBalance = 0 } = userData;
+            let updates = {};
+            purchaseCount += 1;
+
+            updates.purchaseCount = purchaseCount;
+
+            // 1️⃣ First Purchase → ₹5 to user, ₹7 to referrer
+            if (purchaseCount === 1 && !userData.firstPurchaseRewardGiven) {
+              updates.firstPurchaseRewardGiven = true;
+              updates.walletBalance = walletBalance + 5;
+
+              if (userData.referredBy) {
+                const referrerRef = ref(db, `users/${userData.referredBy}`);
+                const refSnap = await get(referrerRef);
+                if (refSnap.exists()) {
+                  const referrer = refSnap.val();
+                  const newRefBal = (referrer.walletBalance || 0) + 7;
+                  await update(referrerRef, { walletBalance: newRefBal });
+                }
+              }
+            }
+
+            // 2️⃣ Third Purchase → ₹5 to user, ₹8 to referrer
+            if (purchaseCount === 3 && !userData.threePurchaseRewardGiven) {
+              updates.threePurchaseRewardGiven = true;
+              updates.walletBalance = (updates.walletBalance || walletBalance) + 5;
+
+              if (userData.referredBy) {
+                const referrerRef = ref(db, `users/${userData.referredBy}`);
+                const refSnap = await get(referrerRef);
+                if (refSnap.exists()) {
+                  const referrer = refSnap.val();
+                  const newRefBal = (referrer.walletBalance || 0) + 8;
+                  await update(referrerRef, { walletBalance: newRefBal });
+                }
+              }
+            }
+
+            // 3️⃣ Milestone: 7 Purchases → Free featured listing
+            if (purchaseCount === 7 && !userData.milestone7Given) {
+              updates.milestone7Given = true;
+              updates.freeFeaturedListings = (userData.freeFeaturedListings || 0) + 1;
+            }
+
+            // 4️⃣ Milestone: 12 Purchases → ₹25 wallet + free featured listing
+            if (purchaseCount === 12 && !userData.milestone12Given) {
+              updates.milestone12Given = true;
+              updates.walletBalance = (updates.walletBalance || walletBalance) + 25;
+              updates.freeFeaturedListings = (userData.freeFeaturedListings || 0) + 1;
+            }
+
+            // ✅ Final update to user node
+            await update(userRef, updates);
+
+          } catch (err) {
+            console.error("Reward logic failed:", err);
+          }
+        }
+        // Save to 'purchased'
+        await set(ref(db, `purchased/${user.uid}/${voucherToSave.key}`), voucherToSave);
+
+        // 🔹 Check first purchase and apply referral bonus
+        const userDataSnap = await get(ref(db, `users/${user.uid}`));
+        if (userDataSnap.exists()) {
+          const data = userDataSnap.val();
+          if ((data.purchaseCount || 0) === 0) { 
+            await handleFirstPurchase(user.uid);
+          }
+        }
+
+        await handlePurchaseRewards(user);
+
+        // Clean up from other locations
+        await remove(ref(db, `categories/${voucherToSave.category}/${voucherToSave.key}`));
+
+        if (voucherToSave.seller) {
+          await remove(ref(db, `listed/${voucherToSave.seller}/${voucherToSave.key}`));
+
+          const earningsAmount = (voucherToSave.price || 0);
+          console.log(earningsAmount);
+
+        const earningsId = Date.now(); // unique ID for record
+        await set(ref(db, `sellerEarnings/${voucherToSave.seller}/${voucherToSave.key}`), {
+          name:voucherToSave.name,
+          amount: earningsAmount,
+          voucherId: voucherToSave.key,
+          soldAt: Date.now(),
+          sellerId: voucherToSave.seller,
+          refundBuyer: null,
+          paidToSeller: null
+        });
+
+   
+        }
+        if (voucherToSave.featured) {
+          await remove(ref(db, `featured/${voucherToSave.seller}/${voucherToSave.key}`));
+        }
+
+          // Clear entire cart
+          await remove(cartRef);
+         console.log("cleared cart");
+         console.log(voucherToSave.key);
+          /*
+        const purRef = ref(db, `purchased/${user.uid}/${v.key}`);
+        await set(purRef,v);
+        // 🧹 Remove from categories/{category}/{key}
+
+            // Clear entire cart
+         await remove(cartRef);
+         console.log("cleared cart");
+         console.log(v);
+         
+          if (v.category && v.key){
+            const catRef = ref(db, `categories/${v.category}/${v.key}`);
+            console.log(catRef);
+            await remove(catRef);
+          }
+          if (v.key && v.seller) {
+            const listedRef = ref(db, `listed/${v.seller}/${v.key}`);
+            console.log(listedRef);
+            await remove(listedRef);
+          }
+          if (v.featured && v.key) {
+            await remove(ref(db, `featured/${v.key}`));
+          }
+            */
+      }
+       // Automatically redirect to homepage after 5 seconds
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 5000);
+
+      // Optional: show a countdown (for better UX)
+      let countdown = 5;
+      const timerDisplay = document.getElementById("timer");
+      const interval = setInterval(() => {
+        countdown--;
+        if (timerDisplay) timerDisplay.textContent = countdown;
+        if (countdown <= 0) clearInterval(interval);
+      }, 1000);
+    });
+  </script>
+</body>
+</html>
