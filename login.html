@@ -66,7 +66,6 @@
   <main class="auth-container">
     <h2 style="text-align: center;">Login to VouchOn</h2>
     <form id="login-form">
-      <input type="text" id="name" placeholder="Your Name" required/>
       <input type="email" id="email" placeholder="Email" required />
       <input type="password" id="password" placeholder="Password" required />
       <button type="submit">Login</button>
@@ -77,13 +76,16 @@
 
     <p id="error-msg" class="error"></p>
     <p id="success-msg" class="success"></p>
+    <button id="resend-btn" style="display:none; background:#003049; color:white; border:none; padding:8px; border-radius:5px; cursor:pointer;">Resend Verification Email</button>
 
     <p style="text-align: center; color: black;">Don't have an account? <a href="signup.html">Sign up</a></p>
   </main>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, sendEmailVerification, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getDatabase, ref, update, get } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+
 
     const firebaseConfig = {
       apiKey: "AIzaSyAWYBe4SSraagPk2piNq2f53l07Bb6xo9s",
@@ -91,11 +93,14 @@
       projectId: "vouchon-c0b55",
       storageBucket: "vouchon-c0b55",
       messagingSenderId: "882090900584",
-      appId: "1:882090900584:web:cd6310c625cc98a477cfdd"
+      appId: "1:882090900584:web:cd6310c625cc98a477cfdd",
+      databaseURL: "https://vouchon-c0b55-default-rtdb.asia-southeast1.firebasedatabase.app"
     };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const db = getDatabase(app);
+
 
     const loginForm = document.getElementById("login-form");
     const errorMsg = document.getElementById("error-msg");
@@ -111,13 +116,66 @@
       const password = document.getElementById("password").value.trim();
 
       signInWithEmailAndPassword(auth, email, password)
-        .then(() => {
+        .then(async(userCred) => {
+          const user = userCred.user;
+          await user.reload(); // refreah verification state 
+          if(!user.emailVerified) {
+            errorMsg.textContent = "Please verify your email before logging in.";
+            document.getElementById("resend-btn").style.display = "block";
+            return;
+          }
+          // Reference to user data in DB
+          const userRef = ref(db, "users/" + user.uid);
+          
+          // Fetch current user data
+          const snapshot = await get(userRef);
+          const userData = snapshot.exists() ? snapshot.val() : {};
+
+          // Mark verified in DB
+          await update(ref(db, "users/" + user.uid), { emailVerified: true });
+
+          // Check if welcome email was already sent
+          if (!userData.welcomeSent) {
+            try {
+              const res = await fetch(
+                "https://us-central1-vouchon-c0b55.cloudfunctions.net/sendWelcomeEmail",
+                {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    email: user.email,
+                    name: user.displayName || "there"
+                  })
+                }
+              );
+
+              const data = await res.json();
+              if (data.success) {
+                console.log("Welcome email sent!");
+                await update(userRef, { welcomeSent: true });
+              } else {
+                console.error("Failed to send welcome email", data.error);
+              }
+            } catch (err) {
+              console.error("Fetch error sending welcome email:", err);
+            }
+          }
+
           window.location.href = "index.html";
         })
         .catch((error) => {
-          errorMsg.textContent = "Invalid Password";
+          errorMsg.textContent = "Invalid Email or Password";
           console.log(error);
         });
+    });
+
+    // Resend verification
+    document.getElementById("resend-btn").addEventListener("click", async () => {
+      const user = auth.currentUser;
+      if (user && !user.emailVerified) {
+        await sendEmailVerification(user);
+        successMsg.textContent = "Verification email resent. Please check your inbox.";
+      }
     });
 
     forgotPasswordLink.addEventListener("click", (e) => {
