@@ -12,7 +12,7 @@
       <button onclick="history.back()" class="buy-btn" style="width: 70px;">⬅ Back</button>
       <button class="buy-btn" onclick="window.location='index.html'" style="width: 70px;">🏠 Home</button>
     </div>
-    <h2>👤 Profile</h2>
+    <h1>👤 Profile</h1>
     <div><!-- Spacer --></div>
   </header>
 
@@ -181,6 +181,23 @@
       </div>
     </div>
 
+       <!-- refunds Vouchers -->
+      <div class="profile-section">
+        <button class="collapsible">
+          <span>Refunded Vouchers </span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="content">
+          <p>Your Refunds appear here.</p>
+          <section id="refunds-section">
+            <h2>Refunded Vouchers</h2>
+            <div id="refunds-list">
+              <!-- Refunded vouchers will be rendered here -->
+            </div>
+          </section>          
+        </div>
+      </div>
+
     <button class="logout-btn" id="logout-btn" onclick="handleLogout()">Logout</button>
     <div class="toast" id="toast">Logging out...</div>
 
@@ -210,6 +227,7 @@
     const storage = getStorage(app);
     let currentUser = null;
     let templateId = null;
+    const navLinks = document.getElementById("nav-links");
 
     const payoutMethodSelect = document.getElementById("payoutMethod");
     const bankFields = document.getElementById("bankFields");
@@ -269,7 +287,6 @@
       const reviews = Object.values(snap.val());
       const avg = (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1);
       avgSpan.innerText = `${avg} / 5`;
-      console.log("Loading reviews for templateId:", templateId);
     }
 
     async function loadRecentReviews(templateId,uniqueId) {
@@ -311,7 +328,6 @@
 
       alert("Thanks for your feedback!");
       document.getElementById(`review-form-${uniqueId}`).style.display = "none";
-      console.log("Submitting review for templateId:", templateId);
       await loadAverageRating(templateId,uniqueId);
       await loadRecentReviews(templateId,uniqueId);
     };
@@ -438,13 +454,11 @@
       document.getElementById("myReferralCode").innerText = data.myReferralCode || "-";
       document.getElementById("walletBalance").innerText = data.walletBalance || 0;
       document.getElementById("featuredListings").innerText = data.freeFeaturedListings || 0;
-      console.log(data);
      }
 
      // Load wallet balance
      const walletRef = ref(db, `users/${user.uid}/walletBalance`);
       const walletSnap = await get(walletRef);
-      console.log(walletSnap);
       if (walletSnap.exists()) {
         document.getElementById("walletBalance").textContent = walletSnap.val();
       } else {
@@ -520,10 +534,6 @@
               `;
 
               li.appendChild(reviewDiv);
-
-              console.log('Brand:', v.brand);
-              console.log('Name:', JSON.stringify(v.name));
-              console.log('Template ID:', getTemplateId(v.brand, v.name));
 
               // Load average + recent reviews
               loadAverageRating(templateId,uniqueId);
@@ -719,8 +729,32 @@
       } else {
         container.innerHTML = '<p>Please log in to see your earnings.</p>';
       }
-     });
 
+      const userUid = user.uid; // or your auth logic
+
+      const refundsList = document.getElementById('refunds-list');
+
+      onValue(ref(db, `purchased/${userUid}`), (snapshot) => {
+        const data = snapshot.val();
+        refundsList.innerHTML = ''; // clear previous
+
+        if (data) {
+          Object.values(data).forEach(purchase => {
+            if (purchase.status === "Voucher Refunded") {  // only show refunded
+              const voucherDiv = document.createElement('div');
+              voucherDiv.className = 'refunded-voucher';
+              voucherDiv.innerHTML = `
+                <p><strong>${purchase.name}</strong> - ₹${purchase.price}</p>
+              `;
+              refundsList.appendChild(voucherDiv);
+            }
+          });
+        } else {
+          refundsList.innerHTML = '<p>No refunded vouchers yet.</p>';
+        }
+      });
+     });
+     
      // toggle edit
      window.toggleEdit = () => {
       el.editSec.style.display = el.editSec.style. display === "none" ? "block" : "none";
