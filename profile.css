@@ -1,7 +1,7 @@
 /* Basic styling */
 body { font-family: Arial, sans-serif; background: #eae2b7; margin: 0; }
-header { background: #003049; color: white; padding: 10px; display: flex; align-items: center; justify-content: space-between; }
-header .btn { background: #f77f00; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer; margin-left: 5px; }
+header { background: #003049; color: white; padding: 10px; display: flex; align-items: center; justify-content: space-between;text-decoration: none; }
+header .btn { background: #f77f00; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer; margin-left: 5px; text-decoration: none;}
 main { padding: 20px; max-width: 800px; margin: auto; }
 section { background: white; padding: 15px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #ccc; }
 input, select, textarea, button { width: 100%; margin: 8px 0; padding: 10px; box-sizing: border-box; border-radius: 5px; border: 1px solid #ccc; }
@@ -94,4 +94,11 @@ li { margin-bottom: 10px; padding: 10px; background: #fcbf49; border-left: 5px s
 .arrow {
   display: inline-block;
   transition: transform 0.3s ease;
+}
+.refunded-voucher {
+  border: 1px solid #d62828;
+  padding: 5px;
+  margin-bottom: 5px;
+  background-color: #fcbf49;
+  border-radius: 5px;
 }
