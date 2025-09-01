@@ -21,54 +21,42 @@ body {
   color: var(--beige);
 }
 
-/* Header Styles */
+/* Consistent header like home */
 .header {
+  background-color: #003049; /* dark blue */
+  color: #fff;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: var(--blue-dark);
-  padding: 1rem 1rem;
-  color: white;
-}
-
-.logo-container {
-  display: flex;
-  align-items: center;
+  padding: 10px 20px;
 }
 
 .logo {
-  height: 25px;
-  margin-right: 0.5rem;
+  font-family: "Poppins", sans-serif; /* modern, clean font */
+  font-size: 1.4em; /* adjust size */
+  font-weight: 700; /* bold */
+  color: #fff; /* brand red */
+  letter-spacing: 1px; /* spacing for premium feel */
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.site-title {
-  font-size: 1rem;
-  font-weight: bold;
-  color: var(--yellow);
+.logo:hover {
+  color: #fff; /* warm orange hover effect */
+  transform: scale(1.05); /* slight zoom on hover */
 }
 
-.nav {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-}
 
-.nav-link {
-  color: var(--beige);
+.nav .nav-link {
+  margin-left: 20px;
+  color: #fff;
   text-decoration: none;
   font-weight: bold;
 }
 
-.nav-link:hover {
-  color: var(--orange);
+.nav .nav-link:hover {
+  text-decoration: underline;
 }
-
-.section-title {
-  font-size: 1.7rem;
-  margin-bottom: 2rem;
-  color: var(--beige);
-}
-
 .voucher-section {
   padding: 3rem 2rem;
   background-color: var(--logo-bg);
@@ -192,56 +180,27 @@ body {
 }
 .arrow-back { position: fixed; left: 20px; top: 10px; cursor: pointer; font-size: 1.5em; color: #cdd1d4; }
 
-/* Filter Bar Styling */
+/* Filter bar spacing under heading */
 .filter-bar {
+  margin: 20px 0;
   display: flex;
+  gap: 10px;
   flex-wrap: wrap;
-  gap: 8px;
-  padding: 16px;
-  background-color: #eae2b7;
-  border-bottom: 2px solid #003049;
-  justify-content: center;
-  align-items: center;
 }
-
-.filter-bar input,
+.filter-bar input, 
 .filter-bar button {
-  padding: 8px 12px;
+  padding: 8px;
+  border-radius: 5px;
   border: 1px solid #ccc;
-  font-size: 8px;
-  width: 80px;
-  border-radius: 6px;
-  outline: none;
 }
-
-.filter-bar input:focus {
-  border-color: #003049;
-}
-
 .filter-bar button {
-  background-color: #f77f00;
-  padding: 8px 12px;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
+  background: #f77f00;
+  color: #fff;
   border: none;
-  transition: background-color 0.3s ease;
+  cursor: pointer;
 }
-
 .filter-bar button:hover {
-  background-color: #d62828;
-}
-
-@media (max-width: 60px) {
-  .filter-bar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .filter-bar input,
-  .filter-bar button {
-    width: 50%;
-  }
+  background: #d65d00;
 }
 .rating-reviews {
   background: #fcbf49;
