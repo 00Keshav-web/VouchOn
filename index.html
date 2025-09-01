@@ -3,230 +3,679 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>VouchOn – Home</title>
-  <style>
-    :root{
-      --blue:#003049;--red:#d62828;--orange:#f77f00;
-      --yellow:#fcbf49;--light:#eae2b7
-    }
-    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--light)}
-    /* ----------  NAV  ---------- */
-    header{background:var(--blue);color:#fff;padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
-    .brand{display:flex;align-items:center;gap:8px}
-    .brand img{height:40px}
-    nav a{color:#fff;text-decoration:none;margin-left:18px;font-weight:600}
-    nav a.btn{background:var(--orange);padding:6px 14px;border-radius:5px}
-    #notif-dropdown {
-      position: absolute;
-      right: 0;
-      background:white;
-      border: 1px solid #ccc;
-      max-height: 300px;
-      overflow-y: auto;
-      width: 300px;
-      z-index: 100;
-    }
+  <title>VouchOn | Great Deals on Top Brands across Various Products</title>
+  <meta name="description" content="VouchOn brings you the best deals, discounts, flash sales, vouchers and cashback offers across fashion, electronics, travel, groceries, and gift cards. Save more on top brands every day!" />
+  <meta name="keywords" content="deals, discounts, vouchers, coupons, cashback, flash sales, fashion deals, travel vouchers, electronics discounts, grocery offers, gift card deals, online offers, VouchOn" />
+  <meta name="author" content="VouchOn" />
 
-    .hidden { display: none; }
+  <!-- ✅ Social Media (Open Graph) -->
+  <meta property="og:title" content="VouchOn | Best Deals & Cashback Offers" />
+  <meta property="og:description" content="Discover exclusive vouchers, discounts, cashback deals and flash sales across top categories only on VouchOn." />
+  <meta property="og:image" content="https://yourwebsite.com/assets/vouchon-preview.jpg" />
+  <meta property="og:url" content="https://yourwebsite.com/" />
+  <meta property="og:type" content="website" />
 
-    #notif-list li {
-      padding: 10px;
-      border-bottom: 1px solid #eee;
-      cursor: pointer;
-    }
-
-    #notif-list li.unread {
-      background-color: #fcbf49;
-    }
-    @keyframes bounce {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.4); }
-    }
-
-    .bounce {
-      animation: bounce 0.4s ease;
-    }
-    /* ----------  HERO  ---------- */
-    .hero{background:var(--orange);color:#fff;text-align:center;padding:60px 15px}
-    .hero h2{margin:0 0 12px;font-size:2.4rem}
-    .hero p{margin:0;font-size:1.15rem}
-    
-    /* ----------  CONTENT SECTIONS  ---------- */
-    h3.section-title{color:var(--blue);padding-left:20px;margin:50px 0 15px}
-    .card-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:20px;padding:0 20px}
-    .card{background:#fff;border:1px solid #ccc;border-left:6px solid var(--yellow);border-radius:6px;padding:14px;width:250px}
-    .card h4{margin:0 0 6px;color:var(--blue)}
-    .card p{margin:4px 0;color:#333}
-    .hide{display:none}
-    .voucher.featured {
-      border: 2px solid gold;
-      background-color: #fff7d1;
-    }
-    #featured-voucher {
-      display: flex;
-      overflow-x: auto;
-      gap: 16px;
-      padding: 10px;
-    }
-
-    .featured-voucher{
-      min-width: 250px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      padding: 10px;
-      background: #fcbf49;
-      flex-shrink: 0;
-    }
-
-    .buy-btn {
-      padding: 0.5rem 1rem;
-      font-weight: bold;
-      background-color: var(--red);
-      color: white;
-      border: none;
-      border-radius: 0.5rem;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    .buy-btn:hover {
-      background-color: var(--blue-dark);
-    }
-
-    /* ----------  FOOTER  ---------- */
-    footer{background:#f8f8f8;text-align:center;padding:25px 10px;color:#444;font-size:.95rem;margin-top:60px}
-  </style>
+  <!-- ✅ Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="VouchOn | Save More with Deals & Cashback" />
+  <meta name="twitter:description" content="Best vouchers, flash sales, discounts and cashback offers across brands." />
+  <meta name="twitter:image" content="https://yourwebsite.com/assets/vouchon-preview.jpg" />
+  <link rel="stylesheet" href="index.css"/>
 </head>
 <body>
-  <!-- ----------  NAVBAR  ---------- -->
+
+  <!-- Navbar -->
   <header>
-    <div class="brand">
-      <img src="vouchon-logo.png" alt="VouchOn Logo">
-      <strong>VouchOn</strong>
-    </div>
-    <nav id="nav-links">
-      <a href="login.html">Login</a>
-      <a href="cart.html" class="btn">Cart</a>
+    <div class="logo">VouchOn</div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="#cashback-scroll">Top Deals</a>
+      <a href="cashback.html">All Deals</a>
+      <!--<a href="profile.html">Profile</a>
+      <a href="cart.html">Cart</a> -->
     </nav>
   </header>
 
-  <!-- ----------  HERO  ---------- -->
+  <!-- Hero Section -->
   <section class="hero">
-    <h2>Save Big. Sell Smart.</h2>
-    <p>Discover, buy or sell discount vouchers in seconds!</p>
+    <h1>Save More Every Time You Shop</h1>
+   <!--<p>Buy & Sell Vouchers • Earn Cashback • Grow Your Wallet with VouchOn</p> 
+    <a href="#featured" class="cta">Buy Vouchers</a> -->
+    <a href="#cashback-scroll" class="cta">Top Deals</a>
+    <a href="#flash-deals" class="cta">Flash Deals</a>
+    <a href="cashback.html" class="cta">All Deals</a>
+
+    <!-- Search Bar -->
+    <div class="search-bar" style="position: relative;">
+      <input id="searchInput" type="text" placeholder="Search for vouchers, stores..."/>
+      <ul id="searchResults"></ul>
+      <!--<select>
+        <option value="all">All</option>
+        <option value="vouchers">Vouchers</option>
+        <option value="cashback">Cashback Stores</option>
+      </select> -->
+    </div>
   </section>
 
-  <!-- ----------  TRENDING VOUCHERS  ---------- -->
-  <section>
+  <!-- Featured Vouchers 
+  <section id="featured">
     <h2>🔥 Featured Vouchers</h2>
-    <div id="featured-voucher"></div>
+    <div class="voucher-grid" id="featuredContainer">
+    </div>
+  </section> -->
+
+  <!-- Flash Deals -->
+  <section id="flash-deals">
+    <h2>⚡ Flash Deals — Free to Grab</h2>
+    <div class="voucher-grid" id="flashContainer"></div>
   </section>
-  
 
-  <!-- ----------  CATEGORIES  ---------- -->
-  <h3 class="section-title">Browse Categories</h3>
-  <div class="card-grid">
-    <a class="card" href="fashion.html"><h4>👗 Fashion</h4></a>
-    <a class="card" href="accessories.html"><h4>👜 Accessories</h4></a>
-    <a class="card" href="travel.html"><h4>✈️ Travel</h4></a>
-    <a class="card" href="groceries.html"><h4>🛒 Groceries</h4></a>
-    <a class="card" href="giftcards.html"><h4>🎁 Gift Cards</h4></a>
-    <a class="card" href="others.html"><h4>📦 Others</h4></a>
+  <!-- Categories 
+  <section id="categories">
+    <h2>Categories</h2>
+    <div class="grid">
+      <div class="card"><a href="Fashion.html">Fashion</a></div>
+      <div class="card"><a href="Accessories.html">Accessories</a></div>
+      <div class="card"><a href="travel.html">Travel</a></div>
+      <div class="card"><a href="Giftcards.html">Gift Cards</a></div>
+      <div class="card"><a href="groceries.html">Groceries</a></div>
+      <div class="card"><a href="others.html">Others</a></div>
+    </div>
+  </section> -->
+
+  <!-- 🔹 How to Earn Banner 
+<div id="howToEarnBanner" style="background:#f77f00; color:white; padding:15px; text-align:center; cursor:pointer; border-radius:12px; margin:20px auto; max-width:800px; font-size:1.2rem; font-weight:bold;">
+  💡 How to Earn & Save with VouchOn?
+</div> -->
+
+<!-- 🔹 Modal 
+<div id="howToEarnModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:center;">
+  <div style="background:white; padding:20px; border-radius:16px; max-width:600px; width:90%; position:relative; color:#003049;">
+    <span id="closeHowToEarn" style="position:absolute; top:10px; right:15px; font-size:20px; cursor:pointer;">✖</span>
+    <h2 style="color:#d62828;">How to Earn & Save with VouchOn</h2>
+    <ul style="line-height:1.6; font-size:1rem; padding-left:20px;">
+      <li><b>💸 Earn Cashback:</b> Shop through VouchOn deals and get cashback added to your wallet.</li>
+      <li><b>👥 Refer Friends:</b> Invite friends! You earn rewards and they get a signup bonus.</li>
+      <li><b>🎟 Buy Vouchers:</b> Get discounted vouchers and save instantly while shopping.</li>
+      <li><b>📲 Wallet Balance:</b> All rewards go into your wallet. Use it for purchases or withdraw (as per policy).</li>
+      <li><b>⭐ Featured Deals:</b> Don’t miss our flash & featured deals to maximize your savings!</li>
+    </ul>
+    <p style="margin-top:15px; font-size:0.9rem; color:#555;">Start today and make the most of every purchase 🚀</p>
   </div>
+</div> -->
 
-  <!-- ----------  FOOTER  ---------- -->
+  <!-- Earn Cashback Horizontal Section -->
+  <section id="cashback-scroll">
+    <h2>💰 Top Deals on All Brands</h2>
+    <div class="voucher-grid" id="cashbackContainer">
+      <!-- Cashback cards will render here -->
+    </div>
+    <div style="text-align:center; margin-top:15px;">
+      <a href="cashback.html" 
+          style="background:#003049; color:white; padding:10px 20px; border-radius:25px; text-decoration:none; font-weight:bold;">
+          View More
+      </a>
+    </div>
+  </section>  
+
+  <!-- Sell Voucher Form
+  <section>
+    <h1><strong>Have Unused Vouchers or Coupons!!</strong></h1>
+    <p><strong>Want to Sell? Here's the right place</strong></p>
+    <div class="sell-form">
+      <h2>Sell Your Voucher</h2>
+      <form id="sellForm">
+        <input type="text" id="voucherName" placeholder="Voucher Name" required />
+        <input type="text" id="brand" placeholder="Brand (e.g., Amazon, Flipkart)" required />
+        <select id="voucher-category" required>
+          <option value="" disabled selected>Select Category</option>
+          <option value="Travel">Travel</option>
+          <option value="Fashion">Fashion</option>
+          <option value="Accessories">Accessories</option>
+          <option value="GiftCards">Gift Cards</option>
+          <option value="Groceries">Groceries</option>
+          <option value="Others">Others</option>
+        </select>   
+        <input type="text" id="code" placeholder="Voucher Code" required />
+        <input type="number" id="price" placeholder="Price (₹)" required />
+        <input type="text" id="conditions" placeholder="Conditions" required />
+        <p style="margin-bottom: -4px;">Expiry Date: </p>
+        <input type="date" id="expiry" required />
+        <label>Upload Proof (PDF, Image, etc.):</label>
+            <input type="file" id="voucher-proof" accept="image/*,.pdf" required />   
+        <label class="checkbox-label">
+          <strong>Feature this listing (paid)</strong>
+          <input type="checkbox" id="featuredCheck" />
+        </label>        
+        <button type="submit">List Voucher</button>
+      </form>
+    </div>
+  </section> -->
+
+  <!-- Referral Program
+  <section>
+    <div class="referral">
+      <h2>Invite Friends & Earn</h2>
+      <p>Earn ₹10 for each referral • Your friend gets ₹5 bonus too!</p>
+      <button id="copyReferralCode">Copy Referral Code</button> -->
+      <!-- Toast container
+      <div id="toast" class="toast"></div>
+    </div>
+  </section> -->
+
+  <!-- Footer -->
   <footer>
-    <p>© 2025 VouchOn | 
-      <a href="terms.html" style="color:#fcbf49; text-decoration:none;">Terms & Conditions</a> | 
-      <a href="privacy.html" style="color:#fcbf49; text-decoration:none;">Privacy Policy</a>
+    <p>© 2025 VouchOn. All Rights Reserved.</p>
+    <p><a href="about.html">About Us</a> | <a href="contact.html">Contact</a> | <!--<a href="refund.html">Refund Policy</a> | --> <a href="terms.html">Terms & Conditions</a></p>
+    <p style="font-size:0.9rem; color:#666; margin-top:10px;">
+      Top Deals • Online Shopping Offers • Best Brand Discounts • Daily Deals • Flash Sales • 
+      Trending Products • Exclusive Coupons • Limited-Time Offers • Fashion Deals • 
+      Electronics Discounts • Travel Offers • Grocery Deals • Accessories & More
     </p>
-    <p>Questions? Contact us at <a href="mailto:vouchon008@gmail.com">support@vouchon.site</a></p>
-    <p>&copy; 2025 VouchOn · Smart Shopping Made Easy</p>
+    
   </footer>
 
-  <!-- ----------  FIREBASE & SEARCH  ---------- -->
+  <!-- Firebase + Script -->
   <script type="module">
-    import { initializeApp }          from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-    import { getDatabase, ref, push, get, onValue, update }  from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+    import { getDatabase, ref, push, onValue, get, child, update, set } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+    import { getStorage, ref as sref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js";
 
-    /* === Firebase config === */
     const firebaseConfig = {
       apiKey: "AIzaSyAWYBe4SSraagPk2piNq2f53l07Bb6xo9s",
       authDomain: "vouchon-c0b55.firebaseapp.com",
-      databaseURL: "https://vouchon-c0b55-default-rtdb.asia-southeast1.firebasedatabase.app",
+      databaseURL:"https://vouchon-c0b55-default-rtdb.asia-southeast1.firebasedatabase.app",
       projectId: "vouchon-c0b55",
       storageBucket: "vouchon-c0b55",
       messagingSenderId: "882090900584",
       appId: "1:882090900584:web:cd6310c625cc98a477cfdd"
     };
-    const app  = initializeApp(firebaseConfig);
-    const db   = getDatabase(app);
-    const auth = getAuth();
-    let currentUser ;
 
-    /* === Login/Profile logic === */
-    const navLinks = document.getElementById("nav-links");
-    onAuthStateChanged(auth, async(user) =>{
-      if (user){
-        navLinks.innerHTML =
-          `<a href="profile.html">Profile</a>
-           <a href="cart.html" class="btn">Cart</a>
-      `;
-      currentUser = user;
-     }
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+    const copyBtn = document.getElementById("copyReferralCode");
+    const toast = document.getElementById("toast");
+    const storage = getStorage(app);
+    let currentUser = null;
+
+    // ✅ Track login/logout properly
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        currentUser = user;
+        console.log("Logged in as:", user.email);
+      } else {
+        currentUser = null;
+        console.log("Not logged in");
+      }
     });
-      const featuredSection = document.getElementById("featured-voucher"); // Add a div with this ID in HTML
 
-      const categories = ["Fashion", "Accessories", "Travel", "Groceries", "GiftCards","Others"]; // list all categories
+    // 🔔 Show toast function
+    function showToast(message) {
+      toast.innerText = message;
+      toast.className = "toast show";
+      setTimeout(() => {
+        toast.className = toast.className.replace("show", "");
+      }, 3000);
+    }
+    document.getElementById("searchInput").addEventListener("input", (e) => {
+      liveSearch(e.target.value);
+    });
 
-      categories.forEach(category => {
-        get(ref(db, `categories/${category}`)).then(snapshot => {
-          if (snapshot.exists()) {
-            const vouchers = snapshot.val();
-            Object.entries(vouchers).forEach(([id, v]) => {
-              if (v.featured && v.verified) {
-                const div = document.createElement("div");
+    // ===================== LIVE SEARCH =====================
+    let allDeals = [];
+
+    // Load deals once (cashback + flash)
+    async function loadAllDeals() {
+      try {
+        const cashbackSnap = await get(ref(db, "cashbackDeals"));
+        
+        allDeals = [
+          ...(cashbackSnap.exists() ? Object.values(cashbackSnap.val()) : [])
+        ];
+      } catch (err) {
+        console.error("Failed to load search deals:", err);
+      }
+    }
+    loadAllDeals();
+
+    document.getElementById("searchInput").addEventListener("input", (e) => {
+      liveSearch(e.target.value);
+    });
+
+    function liveSearch(query) {
+      const resultsBox = document.getElementById("searchResults");
+      resultsBox.innerHTML = "";
+      query = query.toLowerCase().trim();
+
+      if (!query) {
+        resultsBox.style.display = "none";
+        return;
+      }
+
+      const filtered = allDeals.filter(d =>
+        (d.title && d.title.toLowerCase().includes(query)) ||
+        (d.merchant && d.merchant.toLowerCase().includes(query)) ||
+        (d.brand && d.brand.toLowerCase().includes(query))
+      );
+
+      if (filtered.length === 0) {
+        resultsBox.innerHTML = `<div>No deals found for "<strong>${query}</strong>"</div>`;
+        resultsBox.style.display = "block";
+        return;
+      }
+
+      filtered.forEach(deal => {
+        const li = document.createElement("li");
+        const brand = deal.brand || deal.merchant || "Unknown";
+        const title = deal.title || "Deal";
+
+        li.innerHTML = `<strong>${brand}</strong> — ${title}`;
+        li.onclick = () => {
+          window.location.href = `cashback.html#${encodeURIComponent(brand)}`;
+        };
+
+        resultsBox.appendChild(li);
+      });
+
+      resultsBox.style.display = "block";
+    }
+
+    // ===================== FLASH DEALS =====================
+    const flashContainer = document.getElementById("flashContainer");
+
+    /**
+     * Expected RTDB structure:
+     * flashDeals: {
+     *   DEAL_ID: {
+     *     title: "Apple AirPods 3",
+     *     merchant: "Amazon",
+     *     image: "https://…/airpods.jpg",
+     *     priceNow: 1599,             // optional
+     *     priceWas: 2999,             // optional
+     *     tag: "60% OFF",             // optional small badge
+     *     link: "https://earnkaro.com/…",  // your EarnKaro link
+     *     expiresAt: 1737729000000    // UTC ms timestamp
+     *   },
+     *   …
+     * }
+     */
+
+    function formatCountdown(msLeft) {
+      const s = Math.max(0, Math.floor(msLeft / 1000));
+      const h = Math.floor(s / 3600);
+      const m = Math.floor((s % 3600) / 60);
+      const sec = s % 60;
+      return `${String(h).padStart(2,"0")}h ${String(m).padStart(2,"0")}m ${String(sec).padStart(2,"0")}s`;
+    }
+
+    function startCardCountdown(expiresAt, el, onExpire) {
+      const tick = () => {
+        const left = expiresAt - Date.now();
+        if (left <= 0) {
+          el.textContent = "Expired";
+          if (onExpire) onExpire();
+          return clearInterval(timer);
+        }
+        el.textContent = formatCountdown(left);
+      };
+      tick();
+      const timer = setInterval(tick, 1000);
+      return timer;
+    }
+
+    async function loadFlashDeals() {
+      flashContainer.innerHTML = "<p>Loading deals…</p>";
+      try {
+        const snap = await get(ref(db, "flashDeals"));
+        flashContainer.innerHTML = "";
+
+        if (!snap.exists()) {
+          flashContainer.innerHTML = "<p>No flash deals right now. Check back soon!</p>";
+          return;
+        }
+
+        const deals = snap.val();
+        const now = Date.now();
+
+        Object.entries(deals).forEach(([id, d]) => {
+          // Skip expired
+          if (!d.expiry || d.expiry <= now) return;
+
+          const card = document.createElement("div");
+          card.className = "flash-card";
+
+          // safe values
+          const title = d.title || "Deal";
+          const merchant = d.merchant || "";
+          const img = d.image || "";
+          const price = d.startingPrice || 0;
+          const code = d.code || "";
+
+          card.innerHTML = `
+            ${img ? `<img src="${img}" alt="${title}"/>` : ""}
+            ${merchant ? `<img src="${merchant}" alt="${title}" style="width:80px; height:auto; border-radius:6px;"/>` : ""}
+            <h3 style="margin:6px 0 0 0; font-size:1.05em;">${title}</h3>
+            <div> Starting from ₹<span>${price}</span></div>
+            <div>Ends in: <span class="countdown" id="cd-${id}"></span></div>
+            ${code ? `<div class="voucher-code">Code: <strong>${code}</strong></div>` : ""}
+            <button class="grab" id="grab-${id}">Grab Deal</button>
+          `;
+
+          // Countdown
+          const cdEl = card.querySelector(`#cd-${id}`);
+          startCardCountdown(d.expiry, cdEl, () => {
+            // Remove the card when expired
+            card.remove();
+            if (!flashContainer.children.length) {
+              flashContainer.innerHTML = "<p>No active flash deals.</p>";
+            }
+          });
+
+          // Click handler → open EarnKaro link, log an optional click
+          card.querySelector(`#grab-${id}`).addEventListener("click", async () => {
+            if (!currentUser) {
+            alert("Please login to grab Deals.");
+            window.location.href = "login.html";
+            return;
+          }
+            try {
+              // Optional: lightweight click log (even without login)
+              const clickRef = ref(db, `flashClicks/${id}`);
+              const clicksSnap = await get(clickRef);
+              const current = clicksSnap.exists() ? clicksSnap.val() : 0;
+              await update(ref(db, `/`), { [`flashClicks/${id}`]: current + 1 });
+            } catch (e) {
+              // ignore logging issues
+              console.warn("Click log failed", e);
+            }
+            // Open affiliate link
+            if (d.link) {
+              window.open(d.link, "_blank", "noopener");
+            } else {
+              alert("Affiliate link missing for this deal.");
+            }
+          });
+
+          flashContainer.appendChild(card);
+        });
+
+        if (!flashContainer.children.length) {
+          flashContainer.innerHTML = "<p>No active flash deals.</p>";
+        }
+
+      } catch (err) {
+        console.error(err);
+        flashContainer.innerHTML = "<p>Failed to load flash deals.</p>";
+      }
+    }
+
+    loadFlashDeals();
+    // =================== END FLASH DEALS ===================
+
+    /*const howToEarnBanner = document.getElementById("howToEarnBanner");
+    const howToEarnModal = document.getElementById("howToEarnModal");
+    const closeHowToEarn = document.getElementById("closeHowToEarn");
+
+    howToEarnBanner.addEventListener("click", () => {
+      howToEarnModal.style.display = "flex";
+    });
+
+    closeHowToEarn.addEventListener("click", () => {
+      howToEarnModal.style.display = "none";
+    });
+
+    window.addEventListener("click", (e) => {
+      if (e.target === howToEarnModal) {
+        howToEarnModal.style.display = "none";
+      }
+    });
+    */
+
+    // ===================== CASHBACK HORIZONTAL SCROLL =====================
+    const cashbackContainer = document.getElementById("cashbackContainer");
+
+    async function loadCashbackDeals() {
+      cashbackContainer.innerHTML = "<p>Loading deals…</p>";
+
+      try {
+        const snap = await get(ref(db, "cashbackDeals"));
+        cashbackContainer.innerHTML = "";
+
+        if (!snap.exists()) {
+          cashbackContainer.innerHTML = "<p>No deals yet.</p>";
+          return;
+        }
+
+        const deals = snap.val();
+
+        Object.entries(deals).forEach(([id, d]) => {
+          if(!d.topDeals) return;
+
+          const card = document.createElement("div");
+          card.className = "cashback-card";
+
+          card.innerHTML = `
+            ${d.image ? `
+            <div class="img-wrapper">
+            <img src="${d.image}" alt="${d.brand}"/>
+             <span class="brand-overlay">${d.brand}</span>
+             </div>` : ""}
+            <h3>${d.brand}</h3>
+            <p><strong>${d.title}</strong></p>
+            ${d.code ? `<div class="voucher-code">Code: <strong>${d.code}</strong></div>` : ""}
+           <p>Starting From - <strong>${d.cashback || ""} </strong></p> 
+            <button id="cb-${id}" style="margin-top: auto;">Shop Now</button>
+          `;
+
+          // Shop Now → handle click
+          card.querySelector(`#cb-${id}`).addEventListener("click", () => {
+            handleCashbackClick(d.brand, d.trackingUrl, d.title);
+          });
+
+          cashbackContainer.appendChild(card);
+        });
+
+        if (!cashbackContainer.children.length) {
+          cashbackContainer.innerHTML = "<p>No deals to show.</p>";
+        }
+      } catch (err) {
+        console.error("Error loading deals:", err);
+        cashbackContainer.innerHTML = "<p>Failed to load deals.</p>";
+      }
+    }
+
+    loadCashbackDeals();
+
+      // Handle Cashback Click
+      document.querySelectorAll(".cashback-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          handleCashbackClick(btn.dataset.store, btn.dataset.url, btn.dataset.title);
+        });
+      });
+      async function handleCashbackClick(storeName, affiliateUrl, title) {
+        /*if (!currentUser) {
+          alert("Please login to earn cashback!");
+          return;
+        }
+
+        const uid = currentUser.uid;
+        const clickId = Date.now().toString();
+
+        // 1. Save Pending Cashback
+        await set(ref(db, `users/${uid}/cashback/${clickId}`), {
+          store: storeName,
+          status: "pending",
+          amount: "Pending",
+          clickedAt: Date.now()
+        });
+
+        // 2. Log Click (optional analytics)
+        await set(ref(db, `cashbackClicks/${clickId}`), {
+          uid,
+          store: storeName,
+          title: title,
+          timestamp: Date.now()
+        });
+        */
+        // 3. Redirect to Affiliate Link
+        window.location.href = affiliateUrl;
+      }
+      /*
+    copyBtn.addEventListener("click", async () => {
+
+      if (!currentUser) {
+        showToast("Please login to copy your referral code.");
+        return;
+      }
+
+      try {
+        // fetch referral code from Realtime Database
+        const snapshot = await get(child(ref(db), `users/${currentUser.uid}/myReferralCode`));
+        if (snapshot.exists()) {
+          const referralCode = snapshot.val();
+
+          // copy to clipboard
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(referralCode);
+          } else {
+            // ✅ Fallback for non-HTTPS or unsupported browsers
+            const tempInput = document.createElement("input");
+            tempInput.value = referralCode;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+          }
+         showToast("Referral code copied: " + referralCode);
+        } else {
+          showToast("Referral code not found. Please try again.");
+        }
+      } catch (error) {
+        console.error(error);
+        showToast("Something went wrong while fetching your referral code.");
+      }
+    });
+
+    const featuredSection = document.getElementById("featuredContainer"); // Add a div with this ID in HTML
+
+    const categories = ["Fashion", "Accessories", "Travel", "Groceries", "GiftCards","Others"]; // list all categories
+
+    async function loadFeaturedVouchers() {
+      featuredSection.innerHTML = "<p>Loading...</p>";
+
+      try {
+        const snapshot = await get(ref(db, "featured"));
+        featuredSection.innerHTML = "";
+
+        if (snapshot.exists()) {
+          const featuredVouchers = snapshot.val();
+
+          Object.values(featuredVouchers).forEach(userVouchers => {
+            Object.entries(userVouchers).forEach(([id, v]) => {
+              if (v.featured && v.verified) {  // only check featured flag
+                if(new Date (v.expiryDate).getTime() > Date.now()) {
+                  const div = document.createElement("div");
                 div.className = "featured-voucher";
                 div.innerHTML = `
                   <h3>${v.name} 🔥</h3>
-                  <p><strong>Brand: </strong> ${v.brand}</p>
-                  <p>Category: ${category}</p>
+                  <p><strong>Brand:</strong> ${v.brand}</p>
                   <p>Price: ₹${v.price}</p>
                   <p>Expires: ${v.expiryDate}</p>
-                  <p>Condition: ${v.conditions}</p>
-                  <button class="buy-btn"> Buy Now </button>
+                  <p>Conditions: ${v.conditions}</p>
+                  <button class="buy-btn">Buy Now</button>
                 `;
                 const btn = div.querySelector(".buy-btn");
-
                 btn.addEventListener("click", async () => {
-                  if(!auth.currentUser) {
+                  if (!currentUser) {
                     alert("Please log in to buy this voucher.");
                     window.location.href = "login.html";
                     return;
                   }
 
-                  const cartRef = ref(db, `carts/${auth.currentUser.uid}`);
-                   push(cartRef, {
-                    name: v.name,
-                    price: v.price,
-                    expiryDate: v.expiryDate,
-                    brand: v.brand || "",
-                    category: v.category || "Uncategorized", 
-                    code: v.code || "",
-                    conditions: v.conditions || "",
-                    seller: v.seller || "",
-                    key: v.key,
-                    featured: v.featured,
+                  const cartRef = ref(db, `carts/${currentUser.uid}`);
+                  await push(cartRef, {
+                    ...v,
+                    id
                   });
+
                   alert(`${v.name} added to cart.`);
                 });
+
                 featuredSection.appendChild(div);
               }
+                }  
             });
+          });
+
+          if (featuredSection.innerHTML === "") {
+            featuredSection.innerHTML = "<p>No featured vouchers yet.</p>";
           }
-        });
-      });
- </script>
+        } else {
+          featuredSection.innerHTML = "<p>No featured vouchers available.</p>";
+        }
+      } catch (err) {
+        console.error("Error loading featured vouchers:", err);
+        featuredSection.innerHTML = "<p>Failed to load featured vouchers.</p>";
+      }
+    }
+
+    loadFeaturedVouchers();
+
+    // Handle Sell Form
+    document.getElementById("sellForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!currentUser) {
+        alert("Please login to sell and earn.");
+        return;
+      }
+
+      const category = document.getElementById("voucher-category").value;
+      const proofFile = document.getElementById("voucher-proof").files[0]; // 👈 proof upload
+      const id = push(ref(db, `categories/${category}`)).key;
+      const storageRef = sref(storage, `proofs/${currentUser.uid}/${id}`);
+      const snapshot = await uploadBytes(storageRef, proofFile);
+      const proofURL = await getDownloadURL(snapshot.ref);
+      const isfeatured= document.getElementById("featuredCheck").checked;
+
+      const voucher = {
+        name: document.getElementById("voucherName").value,
+        brand: document.getElementById("brand").value,
+        code: document.getElementById("code").value,
+        price: document.getElementById("price").value,
+        conditions: document.getElementById("conditions").value,
+        expiryDate: document.getElementById("expiry").value,
+        key: id,
+        category: category,
+        featured: false,
+        seller: currentUser.uid,
+        proofUrl: proofURL, // will be filled after upload
+        verified: false,
+        sellerConfirmation: true
+      };
+
+      try {
+        // Always push to general vouchers
+        await push(ref(db, `listed/${currentUser.uid}`), voucher);
+
+        // Also push to category
+        await push(ref(db, `categories/${category}`), voucher);
+
+        if (isfeatured) {
+          sessionStorage.setItem("featuredVoucher", JSON.stringify(voucher));
+          localStorage.setItem("paymentPurpose", "featured");
+          window.location.href = "billing.html";
+          return;
+        }
+        e.target.reset();
+        alert("Voucher listed successfully!");
+      } catch (err) {
+        console.error("Error listing voucher:", err);
+        alert("Error listing voucher.");
+      }
+    });
+    */
+  </script>
 </body>
 </html>
