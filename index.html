@@ -375,11 +375,6 @@
 
           // Click handler → open EarnKaro link, log an optional click
           card.querySelector(`#grab-${id}`).addEventListener("click", async () => {
-            if (!currentUser) {
-            alert("Please login to grab Deals.");
-            window.location.href = "login.html";
-            return;
-          }
             try {
               // Optional: lightweight click log (even without login)
               const clickRef = ref(db, `flashClicks/${id}`);
