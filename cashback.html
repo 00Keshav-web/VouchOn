@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VouchOn | Earn Cashback on Top Brands & Online Shopping</title>
+  <meta name="description" content="Earn cashback on online shopping with VouchOn. Discover exclusive cashback offers, top brand deals, and limited-time discounts on fashion, electronics, travel, groceries, and more." />
+  <meta name="keywords" content="cashback, cashback offers, online shopping deals, fashion cashback, electronics cashback, travel cashback, grocery cashback, best deals, top brand discounts, VouchOn" />
+  <meta name="author" content="VouchOn" />
+
+  <!-- 📱 Social Sharing -->
+  <meta property="og:title" content="VouchOn | Earn Cashback on Top Brands" />
+  <meta property="og:description" content="Get the best cashback offers and online shopping deals with VouchOn. Save big on fashion, electronics, travel, and more." />
+  <meta property="og:image" content="https://yourwebsite.com/assets/vouchon-preview.jpg" />
+  <meta property="og:url" content="https://yourwebsite.com/cashback.html" />
+  <meta property="og:type" content="website" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="VouchOn | Best Cashback Deals" />
+  <meta name="twitter:description" content="Shop smart and earn cashback on your favorite brands with VouchOn." />
+  <meta name="twitter:image" content="https://yourwebsite.com/assets/vouchon-preview.jpg" />
+  <style>
+    /* Brand Colors */
+    :root {
+      --blue-dark: #003049;
+      --red: #d62828;
+      --orange: #f77f00;
+      --amber: #fcbf49;
+      --cream: #eae2b7;
+      --ink: #0b1320;
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: var(--cream); color: var(--ink); }
+
+    header {
+      position: sticky; top: 0; z-index: 10;
+      background: var(--blue-dark); color: #fff; padding: 14px 16px; display: flex; align-items: center; gap: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,.12);
+    }
+    header .title { font-weight: 700; font-size: 20px; letter-spacing: .3px; }
+    header .spacer { flex: 1; }
+    
+    .container { padding: 18px 14px 80px; max-width: 1100px; margin: 0 auto; }
+
+    .brand-section { margin: 18px 0 26px; }
+    .brand-header { display: flex; align-items: baseline; gap: 10px; margin: 4px 4px 12px; }
+    .brand-title { font-size: 18px; font-weight: 700; color: var(--blue-dark); }
+    .brand-sub { font-size: 12px; color: #4b5563; }
+
+    /* Horizontal scroller */
+    .row { display: grid; grid-auto-flow: column; grid-auto-columns: 78%; gap: 12px; overflow-x: auto; padding: 6px 2px 8px; scroll-snap-type: x mandatory; }
+    @media (min-width: 560px) { .row { grid-auto-columns: 45%; } }
+    @media (min-width: 900px) { .row { grid-auto-columns: 28%; } }
+    .row::-webkit-scrollbar { height: 10px; }
+    .row::-webkit-scrollbar-thumb { background: #c1c7d0; border-radius: 999px; }
+
+    .card {scroll-snap-align: start; background: #fff; border: 1px solid #e5e7eb; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,.06); display: flex; flex-direction: column; }
+    .thumb { position: relative; width: 100%; aspect-ratio: 16/9; background: #f6f7f9; display: grid; place-items: center; }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .badge { position: absolute; left: 10px; top: 10px; background: var(--orange); color: #111827; font-weight: 700; font-size: 12px; padding: 6px 8px; border-radius: 999px; box-shadow: 0 4px 16px rgba(0,0,0,.12); }
+
+    .buy-btn {
+      padding: 0.5rem 0.5rem;
+      font-weight: bolder;
+      background-color: red;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .buy-btn:hover { background-color: darkblue; }
+
+    .content { padding: 12px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .deal-title { font-weight: 700; font-size: 15px; line-height: 1.25; color: #111827; }
+    .deal-meta { font-size: 12px; color: #4b5563; }
+
+    .cta { display: flex; gap: 10px; margin-top: auto; }
+    .btn-primary { flex: 1; padding: 10px 12px; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; background: var(--red); color: #fff; }
+    .btn-primary:hover { filter: brightness(0.95); }
+    .btn-ghost { padding: 10px 12px; border-radius: 12px; background: #f3f4f6; color: #111827; border: 1px solid #e5e7eb; cursor: pointer; }
+
+    .empty { text-align: center; color: #6b7280; padding: 40px 0; }
+    footer {
+      text-align: center;
+      color: #6b7280;
+      font-size: 12px;
+      padding: 28px 12px 60px;
+      line-height: 1.6;
+      background: #f9fafb;
+      border-top: 1px solid #e5e7eb;
+    }
+    footer a { color: #374151; text-decoration: none; margin: 0 6px; }
+    footer a:hover { text-decoration: underline; }
+    footer .keywords {
+      font-size: 0.85rem;
+      color: #4b5563;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <button class="buy-btn" onclick="history.back()">← Back</button>
+    <div class="title">Top Deals</div>
+    <div class="spacer"></div>
+    <a class="btn" style="color: #fff;" href="index.html">Home</a>
+  </header>
+
+  <div class="container">
+    <div id="brandsContainer" class="brands"></div>
+    <div class="empty" id="emptyState" style="display:none">No deals yet. Please check back soon.</div>
+  </div>
+
+   <!-- ✅ Improved Footer -->
+   <footer>
+    <p>© 2025 VouchOn. All Rights Reserved.</p>
+    <p>
+      <a href="about.html">About Us</a> | 
+      <a href="contact.html">Contact</a> | 
+      <a href="terms.html">Terms & Conditions</a>
+    </p>
+    <p class="keywords">
+      Cashback Offers • Online Shopping Deals • Fashion Cashback • Electronics Discounts • Travel Cashback • Grocery Savings • Limited-Time Offers • Daily Deals • Top Brand Discounts
+    </p>
+  </footer>
+
+
+  <!-- Firebase SDKs -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
+    import { getDatabase,set, ref, get, child, update, push } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAWYBe4SSraagPk2piNq2f53l07Bb6xo9s",
+      authDomain: "vouchon-c0b55.firebaseapp.com",
+      databaseURL:"https://vouchon-c0b55-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "vouchon-c0b55",
+      storageBucket: "vouchon-c0b55",
+      messagingSenderId: "882090900584",
+      appId: "1:882090900584:web:cd6310c625cc98a477cfdd"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
+    const brandsEl = document.getElementById('brandsContainer');
+    const emptyEl = document.getElementById('emptyState');
+
+    const by = (k) => (a, b) => (a[k] || '').localeCompare(b[k] || '');
+    const groupBy = (arr, key) => arr.reduce((acc, item) => {
+      const g = (item[key] || 'Other').trim();
+      (acc[g] = acc[g] || []).push(item); return acc;
+    }, {});
+
+    function dealCard(deal) {
+      const amountTxt = deal.cashback;
+      const title = deal.title || deal.name || 'Great deal';
+      const img = deal.image || deal.logo || 'https://via.placeholder.com/640x360?text=Cashback';
+      const code = deal.code;
+
+      const root = document.createElement('div');
+      root.className = 'card';
+      root.innerHTML = `
+        <div class="thumb">
+          <img src="${img}" alt="${title}">
+         <div class="badge">${deal.brand}</div>
+        </div>
+        <div class="content">
+          <div></div>
+          <div style="font-weight: bolder; margin-bottom: 15px"> ${title} </div>
+          <div class="deal-title">STARTING FROM - ₹${amountTxt}</div>
+          ${code ? `<div class="voucher-code">Code: <strong>${code}</strong></div>` : ""}
+          <div class="cta">
+            <button class="btn-primary"> Go To Site</button>
+           <!-- <button class="btn-ghost">Details</button> -->
+          </div>
+        </div>`;
+
+      // Click handlers
+      const go = async () => {
+      /* if (!auth.currentUser) {
+        alert("Please login to earn cashback!");
+        return;
+      } 
+
+      const uid = auth.currentUser.uid;
+      const clickId = Date.now().toString();
+      const now = Date.now();
+
+      try {
+        // 1. Save pending cashback for the user
+        await set(ref(db, `users/${uid}/cashback/${clickId}`), {
+          store: deal.brand || deal.title || "Unknown",
+          status: "pending",
+          amount: "Pending",
+          clickedAt: now
+        });
+
+        // 2. Log global click for admin/analytics
+        await set(ref(db, `cashbackClicks/${clickId}`), {
+          uid,
+          store: deal.brand || "Unknown",
+          title: deal.title || "Cashback",
+          timestamp: now
+        });
+      } catch (e) {
+        console.warn("cashback log failed", e);
+      } */
+
+      // 3. Redirect to affiliate link
+      const url = deal.trackingUrl || deal.link || deal.url || "#";
+      if (url && url !== "#") window.open(url, "_blank");
+    };
+
+      root.querySelector('.btn-primary').addEventListener('click', go);
+      /*root.querySelector('.btn-ghost').addEventListener('click', () => {
+        alert(`📌 Cashback Details:
+- Tracking Time: 30 min
+- Cashback credited only after order is confirmed by partner app
+- Confirmation may take a few days depending on brand
+- Ensure you do not cancel/return to receive cashback
+`);
+      });
+      */
+      return root;
+    }
+
+    function brandSection(brand, deals) {
+      const sec = document.createElement('section');
+      sec.className = 'brand-section';
+      sec.id = brand.replace(/\s+/g, '-'); // make valid id like "Nike" → "Nike", "Big Bazaar" → "Big-Bazaar"
+
+      const header = document.createElement('div');
+      header.className = 'brand-header';
+      header.innerHTML = `
+        <div class="brand-title">${brand}</div>
+        <div class="brand-sub">Top picks for you</div>
+      `;
+
+      const row = document.createElement('div');
+      row.className = 'row';
+
+      deals.forEach(d => row.appendChild(dealCard(d)));
+
+      sec.appendChild(header);
+      sec.appendChild(row);
+      return sec;
+    }
+
+    async function loadDeals() {
+      try {
+        const snap = await get(child(ref(db), 'cashbackDeals'));
+        if (!snap.exists()) { emptyEl.style.display = 'block'; return; }
+
+        const obj = snap.val();
+        const flat = Object.entries(obj).map(([id, d]) => ({ id, ...d }));
+
+        const now = Date.now();
+        const filtered = flat.filter(d => {
+          if (d.disabled === true) return false;
+          if (d.startsAt && Number(d.startsAt) > now) return false;
+          if (d.expiresAt && Number(d.expiresAt) < now) return false;
+          return true;
+        }).sort(by('brand'));
+
+        if (filtered.length === 0) { emptyEl.style.display = 'block'; return; }
+
+        const grouped = groupBy(filtered, 'brand');
+        const brands = Object.keys(grouped).sort();
+
+        brands.forEach(brand => {
+          const vouchers = grouped[brand];
+
+          // ✅ Show if brand has more than 1 voucher
+          if (vouchers.length > 1) {
+            const section = brandSection(brand, vouchers);
+            brandsEl.appendChild(section);
+          } 
+          // ✅ If only 1 voucher, show only if not marked as topDeal
+          else if (vouchers.length === 1 && !vouchers[0].topDeals) {
+            const section = brandSection(brand, vouchers);
+            brandsEl.appendChild(section);
+          }
+          // else skip the brand
+        });
+        if (window.location.hash) {
+          const targetId = decodeURIComponent(window.location.hash.substring(1)).replace(/\s+/g, '-');
+          const target = document.getElementById(targetId);
+          if (target) {
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+            target.style.outline = "3px solid var(--red)";
+            setTimeout(() => target.style.outline = "", 2000); // remove highlight after 2s
+          }
+        }
+      } catch (e) {
+        console.error('Failed to load cashback deals', e);
+        emptyEl.style.display = 'block';
+        emptyEl.textContent = 'Could not load cashback deals.';
+      }
+    }
+
+    onAuthStateChanged(auth, () => loadDeals());
+  </script>
+</body>
+</html>
