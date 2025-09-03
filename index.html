@@ -180,7 +180,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-    import { getDatabase, ref, push, onValue, get, child, update, set } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+    import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
     import { getStorage, ref as sref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js";
 
     const firebaseConfig = {
@@ -355,7 +355,7 @@
           const code = d.code || "";
 
           card.innerHTML = `
-            ${img ? `<img src="${img}" alt="${title}"/>` : ""}
+            ${img ? `<img src="${img}" alt="${title} style="width:300; height:200; loading:lazy; decoding:async" />` : ""}
             ${merchant ? `<img src="${merchant}" alt="${title}" style="width:80px; height:auto; border-radius:6px;"/>` : ""}
             <h3 style="margin:6px 0 0 0; font-size:1.05em;">${title}</h3>
             <div> Starting from ₹<span>${price}</span></div>
@@ -460,7 +460,7 @@
           card.innerHTML = `
             ${d.image ? `
             <div class="img-wrapper">
-            <img src="${d.image}" alt="${d.brand}"/>
+            <img src="${d.image}" alt="${d.brand}" style="width:300; height:200; loading:lazy; decoding:async"/>
              <span class="brand-overlay">${d.brand}</span>
              </div>` : ""}
             <h3>${d.brand}</h3>
