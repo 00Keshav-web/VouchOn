@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{Blog Title}} | VouchOn Blog</title>
+  <meta name="description" content="{{Short description for SEO}}">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #fafafa;
+      color: #333;
+    }
+    header {
+      background: #003049;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 { margin: 0; font-size: 1.5rem; }
+    nav a { color: white; margin-left: 1rem; text-decoration: none; font-weight: bold; }
+    nav a:hover { color: #fcbf49; }
+
+    main {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    main h2 { color: #003049; }
+    main p { line-height: 1.6; }
+
+    footer {
+      margin-top: 3rem;
+      background: #003049;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .cta-box {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: #fcbf49;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .cta-box a {
+      display: inline-block;
+      margin-top: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: #d62828;
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .cta-box a:hover {
+      background: #f77f00;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>VouchOn Blog</h1>
+    <nav>
+      <a href="/index.html">Home</a>
+      <a href="/blog/index.html">Blog</a>
+      <a href="/fashion.html">Fashion</a>
+      <a href="/travel.html">Travel</a>
+      <a href="/groceries.html">Groceries</a>
+      <a href="/profile.html">Profile</a>
+    </nav>
+  </header>
+
+  <main>
+    <article>
+      <h2>{{Blog Title}}</h2>
+      <p><em>Published on September 2025</em></p>
+      {{Blog Content}}
+    </article>
+
+    <div class="cta-box">
+      <h3>Ready to Save More?</h3>
+      <p>Explore exclusive vouchers on fashion, travel, groceries, and more.</p>
+      <a href="Desktop/VouchOn/index.html">Browse Vouchers</a>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 VouchOn. All Rights Reserved.</p>
+  </footer>
+</body>
+</html>
