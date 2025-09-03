@@ -13,47 +13,32 @@
     button { background-color: #d62828; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; margin-right: 5px; }
     button:disabled { background-color: #ccc; cursor: not-allowed; }
     .proof-img, .proof-video { max-width: 200px; display: block; margin-top: 5px; }
-    /* Flash Deals Layout */
-    #flashDealsList {
-      display: flex;
-      flex-wrap: wrap;      /* ✅ Wrap into multiple rows if too many */
-      gap: 15px;            /* Space between cards */
-      margin-top: 15px;
-    }
-    /* ✅ CASHBACK DEALS */
-    #cashbackList {
+
+    /* Flash & Cashback Deals Layout */
+    #flashDealsList, #cashbackList {
       display: flex;
       flex-wrap: wrap;
       gap: 15px;
       margin-top: 15px;
     }
+
     .deal-card {
       background: #fff;
       border: 1px solid #ccc;
       border-radius: 10px;
       padding: 12px;
-      width: 220px;         /* ✅ Fixed card width */
+      width: 220px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.15);
       text-align: center;
     }
-
     .deal-card img {
       width: 100%;
       height: 140px;
       object-fit: cover;
       border-radius: 6px;
     }
-
-    .deal-card h3 {
-      margin: 8px 0 4px;
-      font-size: 16px;
-      color: #003049;
-    }
-
-    .deal-card p {
-      font-size: 14px;
-      margin: 2px 0;
-    }
+    .deal-card h3 { margin: 8px 0 4px; font-size: 16px; color: #003049; }
+    .deal-card p { font-size: 14px; margin: 2px 0; }
   </style>
 </head>
 <body>
@@ -62,6 +47,7 @@
    <!-- ✅ FLASH DEALS MANAGER -->
    <h2>Manage Flash Deals</h2>
    <form id="flashDealForm">
+     <input type="hidden" id="flashDealId"> <!-- for editing -->
      <label>Title <input type="text" id="dealTitle" required></label>
      <label>Merchant <input type="text" id="dealMerchant"></label>
      <label>Image URL <input type="url" id="dealImage"></label>
@@ -69,13 +55,14 @@
      <label>Code <input type="text" id="dealTag"></label>
      <label>Affiliate Link <input type="url" id="dealLink" required></label>
      <label>Expires At <input type="datetime-local" id="dealExpiry" required></label>
-     <button type="submit">Add Flash Deal</button>
+     <button type="submit" id="flashSubmitBtn">Add Flash Deal</button>
    </form>
- 
    <div id="flashDealsList">Loading flash deals…</div>
  
-   <h2>Manage Deals</h2>
+   <!-- ✅ CASHBACK DEALS MANAGER -->
+   <h2>Manage Cashback Deals</h2>
    <form id="cashbackForm">
+     <input type="hidden" id="cashbackDealId"> <!-- for editing -->
      <label>Brand <input type="text" id="cbBrand" required></label>
      <label>Title <input type="text" id="cbTitle" required></label>
      <label>Starting From <input type="text" id="cbCashback" placeholder="e.g. 10% or ₹500"></label>
@@ -84,70 +71,10 @@
      <label>Expiry (optional) <input type="date" id="cbExpiry"></label>
      <label>Code (optional) <input type="text" id="cbCode"></label>
      <label>Top Deals</label><input type="checkbox" id="cbCheck">
-     <button type="submit">Add Deal</button>
+     <button type="submit" id="cashbackSubmitBtn">Add Deal</button>
    </form>
- 
    <div id="cashbackList">Loading cashback deals…</div>
 
-  <!--<h2>Pending Buyer Confirmation Purchases</h2>
-  <table id="pendingPurchasesTable">
-    <thead>
-      <tr>
-        <th>Buyer ID</th>
-        <th>Voucher ID</th>
-        <th>Seller ID</th>
-        <th>Voucher Name</th>
-        <th>Amount (₹)</th>
-        <th>Confirmed</th>
-        <th>Auto Confirm At</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-
-  <h2>Pending Cashbacks</h2>
-<table border="1" cellpadding="8" cellspacing="0" style="width:100%; background:#fff;">
-  <thead style="background:#003049; color:#fff;">
-    <tr>
-      <th>User</th>
-      <th>Store</th>
-      <th>Amount</th>
-      <th>Proof</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody id="pendingCashbacks"></tbody>
-</table>
-
-  <h2>Seller Payout Summary (Confirmed but Not Paid)</h2>
-  <table id="sellerPayoutTable">
-    <thead>
-      <tr>
-        <th>Seller ID</th>
-        <th>Total Amount (₹)</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-
-  <h2>Voucher Reports (Buyer Submitted Proof)</h2>
-  <div id="reportsContainer">Loading...</div>
-
-  <h2>Buyer Refunds</h2>
-  <table id="buyerRefundTable">
-    <thead>
-      <tr>
-        <th>Buyer ID</th>
-        <th>Voucher ID</th>
-        <th>Amount (₹)</th>
-        <th>Reason</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
--->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js";
     import { getDatabase, ref, get, update, onValue, push, remove, set } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-database.js";
@@ -167,21 +94,18 @@
     const db = getDatabase(app);
     const auth = getAuth();
 
-    const flashDealForm = document.getElementById("flashDealForm");
-    const flashDealsList = document.getElementById("flashDealsList");
-
-   /* const pendingPurchasesTableBody = document.querySelector('#pendingPurchasesTable tbody');
-    const sellerPayoutTableBody = document.querySelector('#sellerPayoutTable tbody');
-    const reportsContainer = document.getElementById("reportsContainer"); */
-
-    // Replace with your admin UIDs
+    // ✅ Admins
     const adminUids = ['XLYCuV6kDqhQC4mzicl5544xsOx1', 'ADMIN_UID_2'];
-
     function isAdmin(user) {
       return user && adminUids.includes(user.uid);
     }
 
-    // ✅ ADD FLASH DEAL
+    // ----------------- FLASH DEALS -----------------
+    const flashDealForm = document.getElementById("flashDealForm");
+    const flashDealsList = document.getElementById("flashDealsList");
+    const flashSubmitBtn = document.getElementById("flashSubmitBtn");
+    const flashDealId = document.getElementById("flashDealId");
+
     flashDealForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const deal = {
@@ -194,12 +118,21 @@
         expiry: new Date(document.getElementById("dealExpiry").value).getTime(),
         createdAt: Date.now()
       };
-      await push(ref(db, "flashDeals"), deal);
+
+      if (flashDealId.value) {
+        // update
+        await update(ref(db, "flashDeals/" + flashDealId.value), deal);
+        alert("Flash Deal Updated ✅");
+        flashSubmitBtn.textContent = "Add Flash Deal";
+      } else {
+        // add new
+        await push(ref(db, "flashDeals"), deal);
+        alert("Flash Deal Added ✅");
+      }
       flashDealForm.reset();
-      alert("Flash Deal Added ✅");
+      flashDealId.value = "";
     });
 
-    // ✅ LOAD FLASH DEALS
     function loadFlashDeals() {
       onValue(ref(db, "flashDeals"), (snapshot) => {
         if (!snapshot.exists()) {
@@ -213,21 +146,35 @@
 
           flashDealsList.innerHTML += `
             <div class="deal-card">
-              <img style="width: 200px" src="${deal.image || 'https://via.placeholder.com/80'}" alt="${deal.title}">
-              <div class="deal-info">
-                <h3>${deal.title}</h3>
-                <p>Merchant: ${deal.merchant || "N/A"}</p>
-                <p>Starting from <b>₹${deal.startingPrice || 0}</b> ${deal.code ? `(${deal.code})` : ''}</p>
-                <p>Expires: ${new Date(deal.expiry).toLocaleString()}</p>
-                <button onclick="deleteDeal('${dealId}')">Delete ❌</button>
-              </div>
+              <img src="${deal.image || 'https://via.placeholder.com/80'}" alt="${deal.title}">
+              <h3>${deal.title}</h3>
+              <p>Merchant: ${deal.merchant || "N/A"}</p>
+              <p>Starting from <b>₹${deal.startingPrice || 0}</b> ${deal.code ? `(${deal.code})` : ''}</p>
+              <p>Expires: ${new Date(deal.expiry).toLocaleString()}</p>
+              <button onclick="editFlashDeal('${dealId}')">Edit ✏️</button>
+              <button onclick="deleteDeal('${dealId}')">Delete ❌</button>
             </div>
           `;
         });
       });
     }
 
-    // ✅ DELETE FLASH DEAL
+    window.editFlashDeal = async (dealId) => {
+      const snap = await get(ref(db, "flashDeals/" + dealId));
+      if (!snap.exists()) return;
+      const deal = snap.val();
+
+      flashDealId.value = dealId;
+      document.getElementById("dealTitle").value = deal.title;
+      document.getElementById("dealMerchant").value = deal.merchant;
+      document.getElementById("dealImage").value = deal.image;
+      document.getElementById("dealStartingPrice").value = deal.startingPrice;
+      document.getElementById("dealTag").value = deal.code;
+      document.getElementById("dealLink").value = deal.link;
+      document.getElementById("dealExpiry").value = new Date(deal.expiry).toISOString().slice(0,16);
+      flashSubmitBtn.textContent = "Update Flash Deal";
+    };
+
     window.deleteDeal = async (dealId) => {
       if (confirm("Delete this deal?")) {
         await remove(ref(db, "flashDeals/" + dealId));
@@ -235,379 +182,104 @@
       }
     };
 
+    // ----------------- CASHBACK DEALS -----------------
     const cashbackForm = document.getElementById("cashbackForm");
-      const cashbackList = document.getElementById("cashbackList");
+    const cashbackList = document.getElementById("cashbackList");
+    const cashbackSubmitBtn = document.getElementById("cashbackSubmitBtn");
+    const cashbackDealId = document.getElementById("cashbackDealId");
 
-      // ✅ ADD CASHBACK DEAL
-      cashbackForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const deal = {
-          brand: document.getElementById("cbBrand").value,
-          title: document.getElementById("cbTitle").value,
-          cashback: document.getElementById("cbCashback").value,
-          trackingUrl: document.getElementById("cbLink").value,
-          image: document.getElementById("cbImage").value,
-          createdAt: Date.now(),
-          clicks: 0,
-          code: document.getElementById("cbCode").value,
-          topDeals: document.getElementById("cbCheck").checked
-        };
-
-        // Only add expiry if filled
-        const expiryVal = document.getElementById("cbExpiry").value;
-        if (expiryVal) {
-          deal.expiresAt = new Date(expiryVal).getTime();
-        }
-
-        await push(ref(db, "cashbackDeals"), deal);
-        cashbackForm.reset();
-        alert("Cashback Deal Added ✅");
-      });
-
-      // ✅ LOAD CASHBACK DEALS
-      function loadCashbackDeals() {
-        onValue(ref(db, "cashbackDeals"), (snapshot) => {
-          if (!snapshot.exists()) {
-            cashbackList.innerHTML = "<p>No cashback deals yet.</p>";
-            return;
-          }
-
-          cashbackList.innerHTML = "";
-          snapshot.forEach(dealSnap => {
-            const deal = dealSnap.val();
-            const dealId = dealSnap.key;
-
-            cashbackList.innerHTML += `
-              <div class="deal-card">
-                <img src="${deal.image || 'https://via.placeholder.com/200'}" alt="${deal.brand}">
-                <h3>${deal.title}</h3>
-                <p><b>Brand:</b> ${deal.brand}</p>
-                <p><b>Cashback:</b> ${deal.cashback || "N/A"}</p>
-                <p><b>Link:</b> <a href="${deal.trackingUrl}" target="_blank">Open</a></p>
-                ${deal.expiresAt ? `<p>Expires: ${new Date(deal.expiresAt).toLocaleDateString()}</p>` : "<p>No Expiry</p>"}
-                ${deal.code ? `<p>Code: ${deal.code}</p>` : ""}
-                <button onclick="deleteCashback('${dealId}')">Delete ❌</button>
-              </div>
-            `;
-          });
-        });
-      }
-
-      // ✅ DELETE CASHBACK DEAL
-      window.deleteCashback = async (dealId) => {
-        if (confirm("Delete this cashback deal?")) {
-          await remove(ref(db, "cashbackDeals/" + dealId));
-          alert("Cashback deal deleted ✅");
-        }
+    cashbackForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const deal = {
+        brand: document.getElementById("cbBrand").value,
+        title: document.getElementById("cbTitle").value,
+        cashback: document.getElementById("cbCashback").value,
+        trackingUrl: document.getElementById("cbLink").value,
+        image: document.getElementById("cbImage").value,
+        createdAt: Date.now(),
+        clicks: 0,
+        code: document.getElementById("cbCode").value,
+        topDeals: document.getElementById("cbCheck").checked
       };
 
-      /*
-    function loadCashbacks() {
-      onValue(ref(db, "users"), (snap) => {
-        const rows = [];
-        snap.forEach(userSnap => {
-          const userId = userSnap.key;
-          if (userSnap.child("cashback").exists()) {
-            userSnap.child("cashback").forEach(cbSnap => {
-              const cb = cbSnap.val();
-              if (cb.status === "pending") {
-                rows.push(`
-                  <tr>
-                    <td>${cb.userEmail || userId}</td>
-                    <td>${cb.store || "N/A"}</td>
-                    <td>₹${cb.amount || 0}</td>
-                    <td>${cb.proofUrl ? `<a href="${cb.proofUrl}" target="_blank">Proof</a>` : "N/A"}</td>
-                    <td>
-                      <button onclick="confirmCashback('${userId}','${cbSnap.key}','${cb.store}')">Approve</button>
-                      <button onclick="rejectCashback('${userId}','${cbSnap.key}')">Reject</button>
-                    </td>
-                  </tr>
-                `);
-              }
-            });
-          }
-        });
-        document.querySelector("#pendingCashbacks").innerHTML = rows.length ? rows.join("") : "<tr><td colspan='5'>No cashbacks pending.</td></tr>";
-      });
-    } 
-    window.confirmCashback = async (uid, clickId, name) => {
-      const amount = prompt("Enter the cashback amount (₹):");
+      const expiryVal = document.getElementById("cbExpiry").value;
+      if (expiryVal) deal.expiresAt = new Date(expiryVal).getTime();
 
-      if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
-        alert("Invalid amount entered. Cashback not approved.");
-        return;
+      if (cashbackDealId.value) {
+        await update(ref(db, "cashbackDeals/" + cashbackDealId.value), deal);
+        alert("Cashback Deal Updated ✅");
+        cashbackSubmitBtn.textContent = "Add Deal";
+      } else {
+        await push(ref(db, "cashbackDeals"), deal);
+        alert("Cashback Deal Added ✅");
       }
+      cashbackForm.reset();
+      cashbackDealId.value = "";
+    });
 
-      console.log(uid,clickId,amount);
-      // Update cashback entry
-      await update(ref(db, `users/${uid}/cashback/${clickId}`), {
-        status: "confirmed",
-        amount: parseFloat(amount)
-      });
-
-      // Move to cashback history
-      await update(ref(db, `users/${uid}/cashbackHistory/${clickId}`), {
-        name: name,
-        amount: parseFloat(amount),
-        status: "confirmed",
-        confirmedAt: Date.now()
-      });
-
-
-      // Add to wallet balance
-      const walletRef = ref(db, `users/${uid}/walletBalance`);
-      const snap = await get(walletRef);
-      const current = snap.exists() ? snap.val() : 0;
-      await set(walletRef, current + parseFloat(amount));
-    }
-
-    // Reject cashback deal
-    window.rejectCashback = async (id, cbsnapkey) => {
-      try {
-        await update(ref(db, `users/${id}/cashback/` + cbsnapkey), { status: "rejected" });
-        alert("❌ Cashback deal rejected!");
-        loadCashbacks();
-      } catch (e) {
-        console.error("Error rejecting cashback deal:", e);
-      }
-    } 
-
-    async function loadDashboard() {
-      const snapshot = await get(ref(db, 'purchased'));
-      if (!snapshot.exists()) {
-        pendingPurchasesTableBody.innerHTML = '<tr><td colspan="7">No purchases found.</td></tr>';
-        sellerPayoutTableBody.innerHTML = '<tr><td colspan="3">No payouts pending.</td></tr>';
-        return;
-      }
-
-      const now = Date.now();
-      const updates = {};
-      const pendingRows = [];
-      const sellerPayouts = {};
-
-      snapshot.forEach(userSnap => {
-        const userUid = userSnap.key;
-        userSnap.forEach(purchaseSnap => {
-          const purchaseId = purchaseSnap.key;
-          const purchase = purchaseSnap.val();
-
-          // Auto-confirm
-          if (!purchase.status && purchase.disputeDeadline && now >= purchase.disputeDeadline) {
-            updates[`purchased/${userUid}/${purchaseId}/status`] = true;
-            updates[`purchased/${userUid}/${purchaseId}/disputeDeadline`] = now;
-            purchase.status = true;
-          }
-
-          // Pending confirmation row
-          if(purchase.status !=='confirmed' && purchase.status !== 'Resolved'&& purchase.status !== 'Voucher Refunded' && purchase.status !== true && !purchase.refundBuyer) {
-            pendingRows.push(`
-            <tr>
-              <td>${userUid}</td>
-              <td>${purchaseId}</td>
-              <td>${purchase.seller}</td>
-              <td>${purchase.name || 'N/A'}</td>
-              <td>₹${purchase.price || 0}</td>
-              <td>No</td>
-              <td>${purchase.disputeDeadline ? new Date(purchase.disputeDeadline).toLocaleString() : 'N/A'}</td>
-            </tr>
-          `);
-          }
-
-          // Seller payouts
-          if ((purchase.status === 'confirmed' || purchase.status === 'Resolved') && !purchase.paidToSeller && !purchase.refundBuyer) {
-              const sellerUid = purchase.seller || 'Unknown';
-              if (!sellerPayouts[sellerUid]) sellerPayouts[sellerUid] = { total: 0, vouchers: [] };
-              sellerPayouts[sellerUid].total += Number(purchase.price || 0);
-              sellerPayouts[sellerUid].vouchers.push({ userUid, purchaseId });
-          }
-        });
-      });
-
-      if (Object.keys(updates).length > 0) await update(ref(db), updates);
-
-      pendingPurchasesTableBody.innerHTML = pendingRows.length ? pendingRows.join('') : '<tr><td colspan="7">No pending purchases.</td></tr>';
-
-      const payoutRows = Object.entries(sellerPayouts).map(([sellerUid, data]) => `
-        <tr>
-          <td>${sellerUid}</td>
-          <td>₹${data.total.toFixed(2)}</td>
-          <td><button onclick='bulkPaySeller("${sellerUid}")'>Pay Seller</button></td>
-        </tr>
-      `);
-      sellerPayoutTableBody.innerHTML = payoutRows.length ? payoutRows.join('') : '<tr><td colspan="3">No payouts pending.</td></tr>';
-
-      window._sellerPayouts = sellerPayouts;
-
-      //buyer-refund
-      const buyerRefundRows = [];
-      snapshot.forEach(userSnap => {
-        const userUid = userSnap.key;
-        userSnap.forEach(purchaseSnap => {
-          const purchaseId = purchaseSnap.key;
-          const purchase = purchaseSnap.val();
-
-          if (purchase.refundBuyer) {
-            buyerRefundRows.push(`
-              <tr>
-                <td>${userUid}</td>
-                <td>${purchaseId}</td>
-                <td>₹${purchase.price || 0}</td>
-                <td>Voucher Dispute</td>
-                <td><button onclick='refundBuyer("${userUid}","${purchaseId}",this)'>Refund Buyer</button></td>
-              </tr>
-            `);
-          }
-        });
-      });
-
-      document.querySelector("#buyerRefundTable tbody").innerHTML =
-        buyerRefundRows.length
-          ? buyerRefundRows.join('')
-          : '<tr><td colspan="5">No refunds pending.</td></tr>';
-          // ✅ New refundBuyer function
-          window.refundBuyer = async (buyerUid, purchaseId, btn) => {
-            if (!confirm("Are you sure you want to refund this buyer?")) return;
-
-            try {
-              await update(ref(db, `purchased/${buyerUid}/${purchaseId}`), {
-                refundBuyer: false,
-                refundDate: new Date().toISOString(),
-                status: "Voucher Refunded"
-              });
-
-              alert("Buyer refunded successfully.");
-              btn.disabled = true;
-              btn.innerText = "Refunded ✅";
-            } catch (error) {
-              console.error("Error refunding buyer:", error);
-              alert("Failed to refund buyer.");
-            }
-          };
-    }
-
-    
-    // ✅ FIXED bulkPaySeller definition
-    window.bulkPaySeller = async (sellerUid) => {
-      const payouts = window._sellerPayouts;
-      if (!payouts || !payouts[sellerUid]) return;
-
-      const totalAmount = payouts[sellerUid].total;
-
-      const updates = {};
-      payouts[sellerUid].vouchers.forEach(v => {
-        updates[`purchased/${v.userUid}/${v.purchaseId}/paidToSeller`] = true;
-        updates[`purchased/${v.userUid}/${v.purchaseId}/refundBuyer`] = false;
-        updates[`purchased/${v.userUid}/${v.purchaseId}/sellerEarned`] = true;
-        updates[`sellerEarnings/${sellerUid}/${v.purchaseId}/paidToSeller`] = true;
-        updates[`sellerEarnings/${sellerUid}/${v.purchaseId}/refundBuyer`] = false;
-      });
-
-      await update(ref(db), updates);
-       // --- 2. Credit to seller wallet ---
-      const walletRef = ref(db, `users/${sellerUid}/walletBalance`);
-      const snap = await get(walletRef);
-      const currentBalance = snap.exists() ? snap.val() : 0;
-      await set(walletRef, currentBalance + totalAmount);
-
-      alert(`Paid ₹${payouts[sellerUid].total.toFixed(2)} to seller ${sellerUid}`);
-      loadDashboard();
-    };
-
-    // 📌 Load voucher reports
-    function loadReports() {
-      onValue(ref(db, "purchased"), (snapshot) => {
+    function loadCashbackDeals() {
+      onValue(ref(db, "cashbackDeals"), (snapshot) => {
         if (!snapshot.exists()) {
-          reportsContainer.innerHTML = "<p>No reports found.</p>";
+          cashbackList.innerHTML = "<p>No cashback deals yet.</p>";
           return;
         }
-        reportsContainer.innerHTML = "";
-        snapshot.forEach(userSnap => {
-          const buyerUid = userSnap.key;
-          userSnap.forEach(voucherSnap => {
-            const voucherId = voucherSnap.val();
-            if( voucherId.status === 'disputed') {
-            const proofHTML = voucherId.reportProof?.endsWith(".mp4")
-              ? `<video src="${voucherId.reportProof}" controls class="proof-video"></video>`
-              : `<img src="${voucherId.reportProof}" class="proof-img"/>`;
-            reportsContainer.innerHTML += `
-              <div style="border:1px solid #ccc; margin:10px; padding:10px;">
-                <p><b>Buyer ID:</b> ${buyerUid}</p>
-                <p><b>Seller ID:</b> ${voucherId.seller}</p>
-                ${proofHTML}
-                <p>Status: ${voucherId.status}</p>
-                <button onclick="resolveReport('${buyerUid}', '${voucherSnap.key}')">Mark as Resolved</button>
-              </div>
-            `;
-            }
-          });
+        cashbackList.innerHTML = "";
+        snapshot.forEach(dealSnap => {
+          const deal = dealSnap.val();
+          const dealId = dealSnap.key;
+
+          cashbackList.innerHTML += `
+            <div class="deal-card">
+              <img src="${deal.image || 'https://via.placeholder.com/200'}" alt="${deal.brand}">
+              <h3>${deal.title}</h3>
+              <p><b>Brand:</b> ${deal.brand}</p>
+              <p><b>Cashback:</b> ${deal.cashback || "N/A"}</p>
+              <p><b>Link:</b> <a href="${deal.trackingUrl}" target="_blank">Open</a></p>
+              ${deal.expiresAt ? `<p>Expires: ${new Date(deal.expiresAt).toLocaleDateString()}</p>` : "<p>No Expiry</p>"}
+              ${deal.code ? `<p>Code: ${deal.code}</p>` : ""}
+              <button onclick="editCashback('${dealId}')">Edit ✏️</button>
+              <button onclick="deleteCashback('${dealId}')">Delete ❌</button>
+            </div>
+          `;
         });
       });
     }
 
-    window.resolveReport = async (buyerUid, reportKey) => {
-      const choice = confirm("Click OK to Pay Seller, Cancel to Refund Buyer");
+    window.editCashback = async (dealId) => {
+      const snap = await get(ref(db, "cashbackDeals/" + dealId));
+      if (!snap.exists()) return;
+      const deal = snap.val();
 
-      const reportRef = ref(db, `purchased/${buyerUid}/${reportKey}`);
-      const snapshot = await get(reportRef);
-      if (!snapshot.exists()) {
-        alert("Report not found.");
-        return;
+      cashbackDealId.value = dealId;
+      document.getElementById("cbBrand").value = deal.brand;
+      document.getElementById("cbTitle").value = deal.title;
+      document.getElementById("cbCashback").value = deal.cashback;
+      document.getElementById("cbLink").value = deal.trackingUrl;
+      document.getElementById("cbImage").value = deal.image;
+      document.getElementById("cbCode").value = deal.code || "";
+      document.getElementById("cbCheck").checked = !!deal.topDeals;
+      if (deal.expiresAt) {
+        document.getElementById("cbExpiry").value = new Date(deal.expiresAt).toISOString().slice(0,10);
       }
+      cashbackSubmitBtn.textContent = "Update Deal";
+    };
 
-      const report = snapshot.val();
-      console.log("Report data:", report);
-
-      
-      // Always mark as resolved
-      await update(ref(db,`purchased/${buyerUid}/${report.key}`),{
-        status: "Resolved"
-      });
-
-      if (choice) {
-        // ✅ Pay Seller
-       await update(ref(db,`purchased/${buyerUid}/${report.key}`),{
-            paidToSeller: false,
-            refundBuyer: false
-        });
-
-       // still unpaid, will appear in payout table
-        alert("Marked as Pay Seller. Added to Seller Payout list.");
-      } else {
-        // ❌ Refund Buyer
-        await update(ref(db,`purchased/${buyerUid}/${report.key}`),{
-          refundBuyer: true,
-          paidToSeller: true
-        });
-
-        await update(ref(db, `sellerEarnings/${report.seller}/${report.key}`), {
-          refundBuyer: true,
-          paidToSeller: true
-        });
-        alert("Marked as Refund Buyer.");
-
-        // Increase cheating count
-        const sellerId = report.seller;
-        const sellerRef = ref(db, `users/${sellerId}/cheatingCount`);
-        const sellerSnap = await get(sellerRef);
-        const currentCount = sellerSnap.exists() ? sellerSnap.val() : 0;
-        await update(ref(db,`users/${sellerId}`),{
-        cheatingCount: currentCount + 1
-        });
+    window.deleteCashback = async (dealId) => {
+      if (confirm("Delete this cashback deal?")) {
+        await remove(ref(db, "cashbackDeals/" + dealId));
+        alert("Cashback deal deleted ✅");
       }
-    }; */
+    };
 
+    // ----------------- AUTH -----------------
     onAuthStateChanged(auth, (user) => {
       if (!isAdmin(user)) {
         alert('Access denied. Admins only.');
         window.location.href = '/';
         return;
       }
-      //loadDashboard();
-      //loadReports();
       loadFlashDeals();
       loadCashbackDeals();
-      //loadCashbacks();
     });
   </script>
 </body>
