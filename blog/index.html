@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VouchOn Blog | Save More with Vouchers</title>
+  <meta name="description" content="Read VouchOn blogs on voucher deals, smart shopping tips, travel savings, festive offers, and more. Learn how to save money with vouchers today!">
+  <style>
+    /* Brand Colors */
+    :root {
+      --blue-dark: #003049;
+      --red: #d62828;
+      --orange: #f77f00;
+      --yellow: #fcbf49;
+      --cream: #eae2b7;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #fafafa;
+      color: #333;
+    }
+
+    header {
+      background: var(--blue-dark);
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    nav a {
+      color: white;
+      margin-left: 1rem;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      color: var(--yellow);
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .blog-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .blog-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease;
+    }
+
+    .blog-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .blog-card h2 {
+      margin-top: 0;
+      font-size: 1.2rem;
+      color: var(--blue-dark);
+    }
+
+    .blog-card p {
+      font-size: 0.95rem;
+      color: #555;
+    }
+
+    .read-more {
+      display: inline-block;
+      margin-top: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--red);
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+
+    .read-more:hover {
+      background: var(--orange);
+    }
+
+    footer {
+      margin-top: 3rem;
+      background: var(--blue-dark);
+      color: white;
+      text-align: center;
+      padding: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <h1>VouchOn Blog</h1>
+    <nav>
+      <a href="/index.html">Home</a>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <h2>Latest Articles</h2>
+    <div class="blog-list">
+      <!-- Blog Card Example -->
+      <div class="blog-card">
+        <h2>How to Save ₹5,000 a Year Using Vouchers</h2>
+        <p>Discover practical ways to save money by using shopping vouchers smartly. Learn hacks to get the most out of your deals...</p>
+        <a href="save-money-vouchers.html" class="read-more">Read More</a>
+      </div>
+
+      <div class="blog-card">
+        <h2>Best Travel Voucher Deals for 2025</h2>
+        <p>Planning a trip? Here’s how you can slash your travel expenses with VouchOn’s best travel vouchers and flight deals...</p>
+        <a href="travel-voucher-deals.html" class="read-more">Read More</a>
+      </div>
+
+      <div class="blog-card">
+        <h2>Gift Vouchers vs Coupons: What’s Better?</h2>
+        <p>Thinking of gifting? Understand the key differences between gift vouchers and discount coupons, and which saves you more...</p>
+        <a href="gift-vs-coupons.html" class="read-more">Read More</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 VouchOn. All Rights Reserved.</p>
+  </footer>
+
+</body>
+</html>
