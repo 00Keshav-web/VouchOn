@@ -57,7 +57,7 @@ nav a:hover { text-decoration: underline; }
   display: inline-block;
   font-size: 0.95em;
 }
-.hero .cta:hover { background: var(--red); color: white; }
+.hero .cta:hover { background: #d62828; color: white; }
 
 /* Search Bar */
 .search-bar {
@@ -392,12 +392,17 @@ font-weight: bold;
 }
 .cashback-card button:hover { background: #d62828; }
 .img-wrapper {
+  width: 200px;
+  height: 200px;
+  overflow: hidden;
   position: relative;
   display: inline-block;
 }
 
 .img-wrapper img {
   width: 200px;
+  height: 100%;
+  object-fit: cover;
   border-radius: 8px; /* optional for smoother look */
 }
 
