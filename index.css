@@ -84,6 +84,9 @@ nav a:hover { text-decoration: underline; }
   font-weight: bold;
   margin-top: 5px;
 }
+.search-bar input {
+  box-sizing: border-box;
+}
 .search-bar button:hover { background: var(--red); color: white; }
 
 /* Sections */
