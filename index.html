@@ -20,8 +20,7 @@
   <meta name="twitter:title" content="VouchOn | Save More with Deals & Cashback" />
   <meta name="twitter:description" content="Best vouchers, flash sales, discounts and cashback offers across brands." />
   <meta name="twitter:image" content="https://yourwebsite.com/assets/vouchon-preview.jpg" />
-  <link rel="preload" href="index.css" as="style" onload="this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="index.css"></noscript>
+  <link rel="stylesheet" href="index.css"/>
 </head>
 <body>
 
@@ -51,6 +50,11 @@
     <div class="search-bar" style="position: relative;">
       <input id="searchInput" type="text" placeholder="Search for vouchers, stores..."/>
       <ul id="searchResults"></ul>
+      <!--<select>
+        <option value="all">All</option>
+        <option value="vouchers">Vouchers</option>
+        <option value="cashback">Cashback Stores</option>
+      </select> -->
     </div>
   </section>
 
@@ -173,7 +177,7 @@
   </footer>
 
   <!-- Firebase + Script -->
-  <script type="module" defer>
+  <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
     import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
@@ -352,7 +356,7 @@
 
           card.innerHTML = `
             ${img ? `<img src="${img}" alt="${title}" width="300" height="200" loading="lazy" decoding="async"/>` : ""}
-            ${merchant ? `<img src="${merchant}" alt="${title}" style="width:80px; height:auto; border-radius:6px;" width="300" height="200" loading="lazy" decoding="async" />` : ""}
+            ${merchant ? `<img src="${merchant}" alt="${title}" style="width:80px; height:auto; border-radius:6px;" width="300" height="200" loading="lazy" decoding="async"/>` : ""}
             <h3 style="margin:6px 0 0 0; font-size:1.05em;">${title}</h3>
             <div> Starting from ₹<span>${price}</span></div>
             <div>Ends in: <span class="countdown" id="cd-${id}"></span></div>
@@ -408,17 +412,7 @@
       }
     }
 
-        // ✅ Lazy-load flash deals only when visible
-        document.addEventListener("DOMContentLoaded", () => {
-      const flashObserver = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting) {
-          loadFlashDeals();
-          flashObserver.disconnect();
-        }
-      });
-      flashObserver.observe(document.getElementById("flash-deals"));
-    });
-
+    loadFlashDeals();
     // =================== END FLASH DEALS ===================
 
     /*const howToEarnBanner = document.getElementById("howToEarnBanner");
