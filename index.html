@@ -20,6 +20,7 @@
   <meta name="twitter:title" content="VouchOn | Save More with Deals & Cashback" />
   <meta name="twitter:description" content="Best vouchers, flash sales, discounts and cashback offers across brands." />
   <meta name="twitter:image" content="https://yourwebsite.com/assets/vouchon-preview.jpg" />
+  <link rel="preload" href="index.css" as="style" onload="this.rel='stylesheet'">
   <link rel="stylesheet" href="index.css"/>
 </head>
 <body>
@@ -286,23 +287,6 @@
     // ===================== FLASH DEALS =====================
     const flashContainer = document.getElementById("flashContainer");
 
-    /**
-     * Expected RTDB structure:
-     * flashDeals: {
-     *   DEAL_ID: {
-     *     title: "Apple AirPods 3",
-     *     merchant: "Amazon",
-     *     image: "https://…/airpods.jpg",
-     *     priceNow: 1599,             // optional
-     *     priceWas: 2999,             // optional
-     *     tag: "60% OFF",             // optional small badge
-     *     link: "https://earnkaro.com/…",  // your EarnKaro link
-     *     expiresAt: 1737729000000    // UTC ms timestamp
-     *   },
-     *   …
-     * }
-     */
-
     function formatCountdown(msLeft) {
       const s = Math.max(0, Math.floor(msLeft / 1000));
       const h = Math.floor(s / 3600);
@@ -415,25 +399,6 @@
     loadFlashDeals();
     // =================== END FLASH DEALS ===================
 
-    /*const howToEarnBanner = document.getElementById("howToEarnBanner");
-    const howToEarnModal = document.getElementById("howToEarnModal");
-    const closeHowToEarn = document.getElementById("closeHowToEarn");
-
-    howToEarnBanner.addEventListener("click", () => {
-      howToEarnModal.style.display = "flex";
-    });
-
-    closeHowToEarn.addEventListener("click", () => {
-      howToEarnModal.style.display = "none";
-    });
-
-    window.addEventListener("click", (e) => {
-      if (e.target === howToEarnModal) {
-        howToEarnModal.style.display = "none";
-      }
-    });
-    */
-
     // ===================== CASHBACK HORIZONTAL SCROLL =====================
     const cashbackContainer = document.getElementById("cashbackContainer");
 
@@ -496,187 +461,9 @@
         });
       });
       async function handleCashbackClick(storeName, affiliateUrl, title) {
-        /*if (!currentUser) {
-          alert("Please login to earn cashback!");
-          return;
-        }
-
-        const uid = currentUser.uid;
-        const clickId = Date.now().toString();
-
-        // 1. Save Pending Cashback
-        await set(ref(db, `users/${uid}/cashback/${clickId}`), {
-          store: storeName,
-          status: "pending",
-          amount: "Pending",
-          clickedAt: Date.now()
-        });
-
-        // 2. Log Click (optional analytics)
-        await set(ref(db, `cashbackClicks/${clickId}`), {
-          uid,
-          store: storeName,
-          title: title,
-          timestamp: Date.now()
-        });
-        */
         // 3. Redirect to Affiliate Link
         window.location.href = affiliateUrl;
       }
-      /*
-    copyBtn.addEventListener("click", async () => {
-
-      if (!currentUser) {
-        showToast("Please login to copy your referral code.");
-        return;
-      }
-
-      try {
-        // fetch referral code from Realtime Database
-        const snapshot = await get(child(ref(db), `users/${currentUser.uid}/myReferralCode`));
-        if (snapshot.exists()) {
-          const referralCode = snapshot.val();
-
-          // copy to clipboard
-          if (navigator.clipboard && navigator.clipboard.writeText) {
-            await navigator.clipboard.writeText(referralCode);
-          } else {
-            // ✅ Fallback for non-HTTPS or unsupported browsers
-            const tempInput = document.createElement("input");
-            tempInput.value = referralCode;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand("copy");
-            document.body.removeChild(tempInput);
-          }
-         showToast("Referral code copied: " + referralCode);
-        } else {
-          showToast("Referral code not found. Please try again.");
-        }
-      } catch (error) {
-        console.error(error);
-        showToast("Something went wrong while fetching your referral code.");
-      }
-    });
-
-    const featuredSection = document.getElementById("featuredContainer"); // Add a div with this ID in HTML
-
-    const categories = ["Fashion", "Accessories", "Travel", "Groceries", "GiftCards","Others"]; // list all categories
-
-    async function loadFeaturedVouchers() {
-      featuredSection.innerHTML = "<p>Loading...</p>";
-
-      try {
-        const snapshot = await get(ref(db, "featured"));
-        featuredSection.innerHTML = "";
-
-        if (snapshot.exists()) {
-          const featuredVouchers = snapshot.val();
-
-          Object.values(featuredVouchers).forEach(userVouchers => {
-            Object.entries(userVouchers).forEach(([id, v]) => {
-              if (v.featured && v.verified) {  // only check featured flag
-                if(new Date (v.expiryDate).getTime() > Date.now()) {
-                  const div = document.createElement("div");
-                div.className = "featured-voucher";
-                div.innerHTML = `
-                  <h3>${v.name} 🔥</h3>
-                  <p><strong>Brand:</strong> ${v.brand}</p>
-                  <p>Price: ₹${v.price}</p>
-                  <p>Expires: ${v.expiryDate}</p>
-                  <p>Conditions: ${v.conditions}</p>
-                  <button class="buy-btn">Buy Now</button>
-                `;
-                const btn = div.querySelector(".buy-btn");
-                btn.addEventListener("click", async () => {
-                  if (!currentUser) {
-                    alert("Please log in to buy this voucher.");
-                    window.location.href = "login.html";
-                    return;
-                  }
-
-                  const cartRef = ref(db, `carts/${currentUser.uid}`);
-                  await push(cartRef, {
-                    ...v,
-                    id
-                  });
-
-                  alert(`${v.name} added to cart.`);
-                });
-
-                featuredSection.appendChild(div);
-              }
-                }  
-            });
-          });
-
-          if (featuredSection.innerHTML === "") {
-            featuredSection.innerHTML = "<p>No featured vouchers yet.</p>";
-          }
-        } else {
-          featuredSection.innerHTML = "<p>No featured vouchers available.</p>";
-        }
-      } catch (err) {
-        console.error("Error loading featured vouchers:", err);
-        featuredSection.innerHTML = "<p>Failed to load featured vouchers.</p>";
-      }
-    }
-
-    loadFeaturedVouchers();
-
-    // Handle Sell Form
-    document.getElementById("sellForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      if (!currentUser) {
-        alert("Please login to sell and earn.");
-        return;
-      }
-
-      const category = document.getElementById("voucher-category").value;
-      const proofFile = document.getElementById("voucher-proof").files[0]; // 👈 proof upload
-      const id = push(ref(db, `categories/${category}`)).key;
-      const storageRef = sref(storage, `proofs/${currentUser.uid}/${id}`);
-      const snapshot = await uploadBytes(storageRef, proofFile);
-      const proofURL = await getDownloadURL(snapshot.ref);
-      const isfeatured= document.getElementById("featuredCheck").checked;
-
-      const voucher = {
-        name: document.getElementById("voucherName").value,
-        brand: document.getElementById("brand").value,
-        code: document.getElementById("code").value,
-        price: document.getElementById("price").value,
-        conditions: document.getElementById("conditions").value,
-        expiryDate: document.getElementById("expiry").value,
-        key: id,
-        category: category,
-        featured: false,
-        seller: currentUser.uid,
-        proofUrl: proofURL, // will be filled after upload
-        verified: false,
-        sellerConfirmation: true
-      };
-
-      try {
-        // Always push to general vouchers
-        await push(ref(db, `listed/${currentUser.uid}`), voucher);
-
-        // Also push to category
-        await push(ref(db, `categories/${category}`), voucher);
-
-        if (isfeatured) {
-          sessionStorage.setItem("featuredVoucher", JSON.stringify(voucher));
-          localStorage.setItem("paymentPurpose", "featured");
-          window.location.href = "billing.html";
-          return;
-        }
-        e.target.reset();
-        alert("Voucher listed successfully!");
-      } catch (err) {
-        console.error("Error listing voucher:", err);
-        alert("Error listing voucher.");
-      }
-    });
-    */
   </script>
 </body>
 </html>
