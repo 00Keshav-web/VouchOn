@@ -168,7 +168,7 @@
   <footer>
     <p>© 2025 VouchOn. All Rights Reserved.</p>
     <p><a href="about.html">About Us</a> | <a href="contact.html">Contact</a> | <!--<a href="refund.html">Refund Policy</a> | --> <a href="terms.html">Terms & Conditions</a></p>
-    <p style="font-size:0.9rem; color:#666; margin-top:10px;">
+    <p style="font-size:0.9rem; color:#333; margin-top:10px;">
       Top Deals • Online Shopping Offers • Best Brand Discounts • Daily Deals • Flash Sales • 
       Trending Products • Exclusive Coupons • Limited-Time Offers • Fashion Deals • 
       Electronics Discounts • Travel Offers • Grocery Deals • Accessories & More
@@ -355,8 +355,8 @@
           const code = d.code || "";
 
           card.innerHTML = `
-            ${img ? `<img src="${img}" alt="${title} style="width:300; height:200; loading:lazy; decoding:async" />` : ""}
-            ${merchant ? `<img src="${merchant}" alt="${title}" style="width:80px; height:auto; border-radius:6px;"/>` : ""}
+            ${img ? `<img src="${img}" alt="${title}" width="300" height="200" loading="lazy" decoding="async"/>` : ""}
+            ${merchant ? `<img src="${merchant}" alt="${title}" style="width:80px; height:auto; border-radius:6px;" />` : ""}
             <h3 style="margin:6px 0 0 0; font-size:1.05em;">${title}</h3>
             <div> Starting from ₹<span>${price}</span></div>
             <div>Ends in: <span class="countdown" id="cd-${id}"></span></div>
@@ -460,7 +460,7 @@
           card.innerHTML = `
             ${d.image ? `
             <div class="img-wrapper">
-            <img src="${d.image}" alt="${d.brand}" style="width:300; height:200; loading:lazy; decoding:async"/>
+            <img src="${d.image}" alt="${d.brand}" width="300" height="200" loading="lazy" decoding="async"/>
              <span class="brand-overlay">${d.brand}</span>
              </div>` : ""}
             <h3>${d.brand}</h3>
